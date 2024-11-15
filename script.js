@@ -10,8 +10,17 @@ const startMenu = document.getElementById("startMenu");
 const startButton = document.getElementById("startButton");
 const leaderboardFormdiv = document.getElementById("form-finish");
 const leaderboardForm = document.getElementById("leaderboardForm");
-let gameStarted = false;
+const homeButton = document.getElementById("homeButton");
+// Add event listeners for leaderboard modal
+const leaderboardButton = document.getElementById("leaderboardButton");
+const leaderboardModal = document.getElementById("leaderboardModal");
+const closeButton = document.getElementById("leaderboardClose");
+// Add event listeners for how to play modal
+const howtoplayButton = document.getElementById("howtoplayButton");
+const howtoplayModal = document.getElementById("howtoplayModal");
+const howtoplayClose = document.getElementById("howtoplayClose");
 
+let gameStarted = false;
 let score = 0;
 let speed = 2;
 let playerX = 150;
@@ -38,12 +47,33 @@ const passThroughSound1 = document.getElementById("passThroughSound1");
 const passThroughSound2 = document.getElementById("passThroughSound2");
 const passThroughSound3 = document.getElementById("passThroughSound3");
 const passThroughSound4 = document.getElementById("passThroughSound4");
-const background = document.getElementById("background");
 const countdownSound = new Audio("sound/countdown-sound.mp3");
 const weak = new Audio("sound/weak.mp3");
 const startSound = new Audio("sound/start-sound.mp3");
 let backgroundPositionY = 0;
 const laneChangeSound = document.getElementById("laneChangeSound");
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const backgroundImage = new Image();
+backgroundImage.src = "assets/road.png"; // Your background image
+
+let yOffset = 0;
+
+function drawBackground() {
+  // Clear the canvas before drawing
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the background image at the current yOffset
+  ctx.drawImage(backgroundImage, 0, yOffset, canvas.width, canvas.height);
+  ctx.drawImage(backgroundImage, 0, yOffset - canvas.height, canvas.width, canvas.height);
+
+  // Update the yOffset to create the upward movement
+  yOffset += speed; // Move the background upward based on speed
+  if (yOffset >= canvas.height) {
+    yOffset -= canvas.height; // Adjust offset for seamless looping
+  }
+}
 
 function updatePlayerPosition() {
   // Ensure the player stays within the game area
@@ -109,20 +139,29 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
+    return (
+      x < obstacleRect.right &&
+      x + 20 > obstacleRect.left &&
+      y < obstacleRect.bottom &&
+      y + 20 > obstacleRect.top
+    );
   });
 }
 
 function checkCollision(rect1, rect2) {
-  return rect1.left < rect2.right && rect1.right > rect2.left && rect1.top < rect2.bottom && rect1.bottom > rect2.top;
+  return (
+    rect1.left < rect2.right &&
+    rect1.right > rect2.left &&
+    rect1.top < rect2.bottom &&
+    rect1.bottom > rect2.top
+  );
 }
 
 function updateGame() {
   if (isGameOver) return;
 
   // Update background position based on speed
-  backgroundPositionY += speed;
-  background.style.backgroundPositionY = `${backgroundPositionY}px`;
+  drawBackground();
 
   obstacles.forEach((obstacle, index) => {
     const top = parseInt(obstacle.style.top);
@@ -205,7 +244,13 @@ function setPlayerLane(x) {
   //  laneChangeSound.play();
   //}
 
-  playerX = Math.max(0, Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2));
+  playerX = Math.max(
+    0,
+    Math.min(
+      gameArea.clientWidth - playerWidth,
+      newLane * laneWidth + (laneWidth - playerWidth) / 2
+    )
+  );
   updatePlayerPosition();
 }
 
@@ -213,7 +258,7 @@ function startGame() {
   if (gameStarted) return;
   gameStarted = true;
   startMenu.style.display = "none";
-  document.getElementById("background").style.animationPlayState = "running";
+  drawBackground();
   isGameOver = false;
   score = 0;
   scoreElement.textContent = `Score: ${score}`;
@@ -296,27 +341,47 @@ function showLeaderboardForm(newScore) {
   document.getElementById("leaderboardForm").addEventListener("submit", function (e) {
     e.preventDefault();
     const playerNameInput = document.getElementById("playerName");
+    const playerEmailInput = document.getElementById("playerEmail");
     const playerName = playerNameInput.value;
+    const playerEmail = playerEmailInput.value;
     if (playerName) {
-      updateLeaderboard(playerName, newScore);
-      leaderboardFormdiv.style.display = "none";
-      playerNameInput.value = ""; // Clear the input field
+      $.ajax({
+        url: "https://www.axs.com.sg/drive-winner-form/", // Replace with the path to your PHP file
+        type: "POST",
+        data: {
+          winner_name: playerName,
+          winner_email: playerEmail,
+          winner_score: newScore,
+          submit_winner: true, // Indicate that the form is submitted
+        },
+        success: function (response) {
+          alert("Score submitted successfully!");
+          leaderboardFormdiv.style.display = "none";
+          playerNameInput.value = ""; // Clear the input field
+          playerEmailInput.value = ""; // Clear the input field
+        },
+        error: function (xhr, status, error) {
+          // Handle error response
+          console.error(error);
+          // alert("An error occurred while submitting the score.");
+        },
+      });
     }
   });
 }
 
-function updateLeaderboard(playerName, newScore) {
-  leaderboard.push({ name: playerName, score: newScore });
-  leaderboard.sort((a, b) => b.score - a.score);
-  if (leaderboard.length > 5) {
-    leaderboard.length = 5; // Keep only top 5 scores
-  }
-  displayLeaderboard();
-}
+// function updateLeaderboard(playerName, newScore) {
+//   leaderboard.push({ name: playerName, score: newScore });
+//   leaderboard.sort((a, b) => b.score - a.score);
+//   if (leaderboard.length > 5) {
+//     leaderboard.length = 5; // Keep only top 5 scores
+//   }
+//   displayLeaderboard();
+// }
 
 function displayLeaderboard() {
   const leaderboardElement = document.getElementById("leaderboard");
-  leaderboardElement.innerHTML = "<h2>Leaderboard</h2><ol></ol>";
+  leaderboardElement.innerHTML = "<ol></ol>";
   const leaderboardList = leaderboardElement.querySelector("ol");
 
   leaderboard.forEach((entry) => {
@@ -378,4 +443,64 @@ startButton.addEventListener("click", startGame);
 // startGame();
 document.addEventListener("DOMContentLoaded", function () {
   updatePlayerPosition();
+});
+
+leaderboardButton.addEventListener("click", function () {
+  leaderboardModal.style.display = "flex";
+});
+
+closeButton.addEventListener("click", function () {
+  leaderboardModal.style.display = "none";
+});
+
+window.onclick = function (event) {
+  if (event.target === leaderboardModal) {
+    leaderboardModal.style.display = "none";
+  }
+};
+
+howtoplayButton.addEventListener("click", function () {
+  howtoplayModal.style.display = "flex";
+});
+
+howtoplayClose.addEventListener("click", function () {
+  howtoplayModal.style.display = "none";
+});
+
+window.onclick = function (event) {
+  if (event.target === howtoplayModal) {
+    howtoplayModal.style.display = "none";
+  }
+};
+
+document.addEventListener("keydown", (e) => {
+  if (!gameStarted) return;
+  if (e.key === "ArrowLeft") {
+    // Move left
+    setPlayerLane(playerX - 100); // Adjust the lane to the left
+  } else if (e.key === "ArrowRight") {
+    // Move right
+    setPlayerLane(playerX + 100); // Adjust the lane to the right
+  }
+});
+
+homeButton.addEventListener("click", function () {
+  startMenu.style.display = "flex"; // Show the start menu
+  gameOverElement.style.display = "none"; // Hide game over screen if it's visible
+  leaderboardFormdiv.style.display = "none"; // Hide leaderboard form if it's visible
+  // Optionally reset the game state or any other necessary elements
+});
+
+jQuery(document).ready(function ($) {
+  $.ajax({
+    url: "https://www.axs.com.sg/axs-drive-game-leaderboard/", // Adjust the path to your PHP file
+    type: "POST",
+    success: function (response) {
+      console.log(response);
+      // $("#leaderboard").html(response); // Update the HTML with the response
+    },
+    error: function () {
+      console.log("Error retrieving data.");
+    },
+  });
 });

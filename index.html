@@ -7,26 +7,39 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <img src="assets/axs-speed-fever.png" style="width: 30%; margin-bottom: 20px" />
     <div class="gameArea-background">
-      <div id="background"></div>
+      <canvas id="gameCanvas" width="500" height="800"></canvas>
       <div id="startMenu">
         <img src="assets/axs-speed-fever.png" class="speed-title" />
         <!-- <h1>Car Park Racing</h1> -->
-        <div id="startButton"><img src="assets/start-btn.png" /></div>
+        <div class="game-button" id="startButton"><img src="assets/start-btn.png" /></div>
+        <div class="game-button" id="leaderboardButton">
+          <img src="assets/leaderboard-btn.png" />
+        </div>
+        <div class="game-button" id="howtoplayButton"><img src="assets/how-btn.png" /></div>
       </div>
       <div id="gameOver">
         <div>Game Over</div>
         <div id="finalScore"></div>
-        <div id="restartButton"><img src="assets/restart-btn.png" /></div>
+        <div class="game-button" id="restartButton"><img src="assets/restart-btn.png" /></div>
+        <div class="game-button" id="homeButton"><img src="assets/home-btn.png" /></div>
       </div>
       <div id="gameArea">
         <div id="countdown"></div>
         <div id="player"></div>
         <img id="explosion" src="assets/explosion.gif" alt="Explosion" />
       </div>
+      <div id="leaderboardModal">
+        <p>Leaderboard</p>
+        <div id="leaderboard"></div>
+        <div id="leaderboardClose">X</div>
+      </div>
+      <div id="howtoplayModal">
+        <p>How to Play</p>
+        <div id="howtoplay"></div>
+        <div id="howtoplayClose">X</div>
+      </div>
       <div id="score">Score: 0</div>
-      <div id="leaderboard"></div>
       <div id="form-finish" class="form-finish">
         <form id="leaderboardForm">
           <h3>Enter your name for the leaderboard:</h3>
@@ -61,6 +74,7 @@
     <audio id="laneChangeSound" src="sound/lane-change-sound.mp3"></audio>
     <!-- Add your lane change sound file here -->
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
