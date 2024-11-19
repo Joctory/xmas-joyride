@@ -4,13 +4,15 @@ const player = document.getElementById("player");
 const scoreElement = document.getElementById("score");
 const gameOverElement = document.getElementById("gameOver");
 const finalScoreElement = document.getElementById("finalScore");
-const restartButton = document.getElementById("restartButton");
-const scoreOverTimeCheckbox = document.getElementById("scoreOverTime");
 const startMenu = document.getElementById("startMenu");
 const startButton = document.getElementById("startButton");
-const leaderboardFormdiv = document.getElementById("form-finish");
+const pauseButton = document.getElementById("pauseBtn");
+const leaderboardFormdiv = document.getElementById("formfinish");
 const leaderboardForm = document.getElementById("leaderboardForm");
-const homeButton = document.getElementById("homeButton");
+const pauseModal = document.getElementById("pauseModal");
+// Options
+const musicButton = document.getElementById("music-setting");
+const effectButton = document.getElementById("effect-setting");
 // Add event listeners for leaderboard modal
 const leaderboardButton = document.getElementById("leaderboardButton");
 const leaderboardModal = document.getElementById("leaderboardModal");
@@ -19,6 +21,11 @@ const closeButton = document.getElementById("leaderboardClose");
 const howtoplayButton = document.getElementById("howtoplayButton");
 const howtoplayModal = document.getElementById("howtoplayModal");
 const howtoplayClose = document.getElementById("howtoplayClose");
+// Add event listeners for credit modal
+const creditButton = document.getElementById("creditButton");
+const creditModal = document.getElementById("creditModal");
+const creditClose = document.getElementById("creditClose");
+const overlay = document.getElementById("overlay");
 
 let gameStarted = false;
 let score = 0;
@@ -40,25 +47,92 @@ let obstacleChangeInterval;
 let obstacleSpawnRate = 2000; // Initial spawn rate in milliseconds
 
 const obstacleTypes = ["obstacle-1", "obstacle-2", "obstacle-3", "obstacle-4", "obstacle-5"];
-const coinSound = document.getElementById("coinSound");
-const explosionSound = document.getElementById("explosionSound");
-const backgroundMusic = document.getElementById("backgroundMusic");
-const passThroughSound1 = document.getElementById("passThroughSound1");
-const passThroughSound2 = document.getElementById("passThroughSound2");
-const passThroughSound3 = document.getElementById("passThroughSound3");
-const passThroughSound4 = document.getElementById("passThroughSound4");
-const countdownSound = new Audio("sound/countdown-sound.mp3");
 const weak = new Audio("sound/weak.mp3");
-const startSound = new Audio("sound/start-sound.mp3");
-let backgroundPositionY = 0;
 const laneChangeSound = document.getElementById("laneChangeSound");
 
+// Variable to track the pause state
+let isPaused = false;
+
+// Canvas Background
+let backgroundPositionY = 0;
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const backgroundImage = new Image();
 backgroundImage.src = "assets/road.png"; // Your background image
 
 let yOffset = 0;
+
+// Sound Effect
+let areSoundEffectsOn = true; // Assume sound effects are on by default
+let isMusicOn = true; // Assuming this is the 'on' icon
+let sounds = {}; // Object to hold all audio objects
+
+// Global variable to hold the currently playing sound effect
+let currentSoundEffect = null;
+
+// Preload the sound effects when the page loads
+function preloadSounds() {
+  sounds.coinSound = new Audio("/sound/coin-sound.mp3");
+  sounds.explosionSound = new Audio("/sound/explosion-sound.mp3");
+  sounds.titleMusic = new Audio("/sound/title.mp3");
+  sounds.backgroundMusic = new Audio("/sound/ingame.mp3");
+  sounds.passThroughSound1 = new Audio("/sound/pass-through-sound1.mp3");
+  sounds.passThroughSound2 = new Audio("/sound/pass-through-sound2.mp3");
+  sounds.passThroughSound3 = new Audio("/sound/pass-through-sound3.mp3");
+  sounds.passThroughSound4 = new Audio("/sound/pass-through-sound4.mp3");
+  sounds.countdownSound = new Audio("/sound/countdown-sound.mp3");
+  sounds.startSound = new Audio("/sound/start-sound.mp3");
+  sounds.laneChangeSound = new Audio("/sound/lane-change-sound.mp3");
+}
+
+// Function to toggle sound effects
+function toggleSoundIcon() {
+  const effectTick = document.getElementById("effect-tick");
+  if (effectTick.style.display === "none" || effectTick.style.display === "") {
+    areSoundEffectsOn = true;
+    effectTick.style.display = "block"; // Show the tick image
+  } else {
+    areSoundEffectsOn = false;
+    effectTick.style.display = "none"; // Hide the tick image
+  }
+}
+
+// Function to play a sound effect
+function playSoundEffect(soundKey) {
+  const sound = sounds[soundKey];
+
+  if (sound && areSoundEffectsOn) {
+    // Set the new sound as the current sound effect
+    currentSoundEffect = sound;
+
+    sound.play().catch((error) => {
+      console.error(`Error playing sound: ${soundKey}`, error);
+    });
+  }
+}
+
+// Options
+function toggleMusicSetting() {
+  const musicTick = document.getElementById("music-tick");
+  if (musicTick.style.display === "none" || musicTick.style.display === "") {
+    isMusicOn = true;
+    playMusic();
+    musicTick.style.display = "block"; // Show the tick image
+  } else {
+    isMusicOn = false;
+    sounds.titleMusic.pause(); // Stop the music
+    musicTick.style.display = "none"; // Hide the tick image
+  }
+}
+
+// Function to play music
+function playMusic() {
+  if (isMusicOn) {
+    sounds.titleMusic.loop = true; // Optional: Loop the music
+    sounds.titleMusic.currentTime = 0;
+    sounds.titleMusic.play();
+  }
+}
 
 function drawBackground() {
   // Clear the canvas before drawing
@@ -90,8 +164,9 @@ function createObstacle() {
   const obstacleType = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
   obstacle.classList.add(obstacleType);
 
+  const laneWidth = gameArea.clientWidth / 3;
   const lane = Math.floor(Math.random() * 3);
-  const x = lane * 100 + 35;
+  const x = lane * laneWidth + (laneWidth - 30) / 2;
   obstacle.style.left = `${x}px`;
   obstacle.style.top = "-50px";
   obstacle.dataset.lane = lane;
@@ -123,10 +198,11 @@ function createCoin() {
   }
   coin.dataset.value = coinValue;
 
-  let lane, x, y;
+  let laneWidth, lane, x, y;
   do {
+    laneWidth = gameArea.clientWidth / 3;
     lane = Math.floor(Math.random() * 3);
-    x = lane * 100 + 35;
+    x = lane * laneWidth + (laneWidth - 30) / 2;
     y = -20;
   } while (checkCoinOverlap(x, y));
 
@@ -186,7 +262,8 @@ function updateGame() {
           newLane = Math.random() < 0.5 ? 0 : 2;
         }
 
-        const newX = newLane * 100 + 35;
+        const laneWidth = gameArea.clientWidth / 3; // Calculate lane width based on gameArea width
+        const newX = newLane * laneWidth + (laneWidth - 30) / 2;
         obstacle.style.left = `${newX}px`;
         obstacle.dataset.lane = newLane; // Update the stored lane
 
@@ -220,7 +297,7 @@ function updateGame() {
       gameArea.removeChild(coin);
       coins.splice(index, 1);
       score += parseInt(coin.dataset.value);
-      coinSound.play(); // Play coin sound effect
+      playSoundEffect("coinSound");
     }
   });
 
@@ -230,9 +307,16 @@ function updateGame() {
 }
 
 function playRandomPassThroughSound() {
-  const sounds = [passThroughSound1, passThroughSound2, passThroughSound3, passThroughSound4];
-  const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-  randomSound.play();
+  const passsounds = [
+    sounds.passThroughSound1,
+    sounds.passThroughSound2,
+    sounds.passThroughSound3,
+    sounds.passThroughSound4,
+  ];
+  const randomSound = passsounds[Math.floor(Math.random() * passsounds.length)];
+  if (areSoundEffectsOn) {
+    randomSound.play();
+  }
 }
 
 function setPlayerLane(x) {
@@ -256,9 +340,13 @@ function setPlayerLane(x) {
 
 function startGame() {
   if (gameStarted) return;
-  gameStarted = true;
+  hidePreview(pauseModal);
+  sounds.titleMusic.pause();
   startMenu.style.display = "none";
+  pauseButton.style.display = "none";
   drawBackground();
+  gameStarted = true;
+  isPaused = false;
   isGameOver = false;
   score = 0;
   scoreElement.textContent = `Score: ${score}`;
@@ -277,31 +365,31 @@ function startGame() {
   let countdown = 3;
   const countdownInterval = setInterval(() => {
     countdownDiv.textContent = countdown;
-    // Play countdown sound effect
-    countdownSound.play();
+    // Play countdown sound effect;
+    playSoundEffect("countdownSound");
     countdown--;
     if (countdown < 0) {
       clearInterval(countdownInterval);
       countdownDiv.textContent = "START";
-      // Play a different sound effect for the start
-      //startSound.play();
       setTimeout(() => {
         countdownDiv.style.display = "none";
         countdownDiv.textContent = "";
-        backgroundMusic.play(); // Play background music
+        if (isMusicOn) {
+          sounds.backgroundMusic.play();
+        }
+        gameArea.classList.remove("disabled");
         updateGame();
         obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
         coinInterval = setInterval(createCoin, 3000);
-        if (scoreOverTimeCheckbox.checked) {
-          scoreInterval = setInterval(() => {
-            score++;
-            // Increase obstacle spawn rate every 10 seconds
-            if (score % 20 === 0) {
-              updateObstacleSpawnRate();
-            }
-          }, 100);
-        }
-      }, 1000); // Display "START" for 1 second before starting the game
+        scoreInterval = setInterval(() => {
+          score++;
+          // Increase obstacle spawn rate every 10 seconds
+          if (score % 20 === 0) {
+            updateObstacleSpawnRate();
+          }
+        }, 100);
+        pauseButton.style.display = "block";
+      }, 1000);
     }
   }, 1000);
 }
@@ -314,11 +402,13 @@ function gameOver() {
   clearInterval(coinInterval);
   clearInterval(scoreInterval);
 
-  backgroundMusic.pause(); // Stop background music
-  backgroundMusic.currentTime = 0; // Reset music to start
+  sounds.backgroundMusic.pause();
 
   // Play explosion sound
-  explosionSound.play();
+  playSoundEffect("explosionSound");
+
+  // Disable touch in game area
+  gameArea.classList.add("disabled");
 
   // Show explosion
   const explosion = document.getElementById("explosion");
@@ -328,16 +418,16 @@ function gameOver() {
 
   // Hide explosion and show game over screen after animation
   setTimeout(() => {
-    explosion.style.display = "none";
     gameOverElement.style.display = "flex";
     finalScoreElement.textContent = `Final Score: ${score}`;
     weak.play();
     showLeaderboardForm(score);
+    explosion.style.display = "none";
   }, 1500); // Adjust this time based on your explosion GIF duration
 }
 
 function showLeaderboardForm(newScore) {
-  leaderboardFormdiv.style.display = "block";
+  showPreview(formfinish);
   document.getElementById("leaderboardForm").addEventListener("submit", function (e) {
     e.preventDefault();
     const playerNameInput = document.getElementById("playerName");
@@ -345,6 +435,7 @@ function showLeaderboardForm(newScore) {
     const playerName = playerNameInput.value;
     const playerEmail = playerEmailInput.value;
     if (playerName) {
+      hidePreview(formfinish);
       $.ajax({
         url: "https://www.axs.com.sg/drive-winner-form/", // Replace with the path to your PHP file
         type: "POST",
@@ -356,7 +447,6 @@ function showLeaderboardForm(newScore) {
         },
         success: function (response) {
           alert("Score submitted successfully!");
-          leaderboardFormdiv.style.display = "none";
           playerNameInput.value = ""; // Clear the input field
           playerEmailInput.value = ""; // Clear the input field
         },
@@ -370,32 +460,118 @@ function showLeaderboardForm(newScore) {
   });
 }
 
-// function updateLeaderboard(playerName, newScore) {
-//   leaderboard.push({ name: playerName, score: newScore });
-//   leaderboard.sort((a, b) => b.score - a.score);
-//   if (leaderboard.length > 5) {
-//     leaderboard.length = 5; // Keep only top 5 scores
-//   }
-//   displayLeaderboard();
-// }
-
-function displayLeaderboard() {
-  const leaderboardElement = document.getElementById("leaderboard");
-  leaderboardElement.innerHTML = "<ol></ol>";
-  const leaderboardList = leaderboardElement.querySelector("ol");
-
-  leaderboard.forEach((entry) => {
-    const listItem = document.createElement("li");
-    listItem.textContent = `${entry.name}: ${entry.score}`;
-    leaderboardList.appendChild(listItem);
-  });
-}
-
 function updateObstacleSpawnRate() {
   obstacleSpawnRate = Math.max(500, obstacleSpawnRate - 100); // Decrease spawn rate, but not lower than 500ms
   clearInterval(obstacleInterval);
   obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
 }
+
+// Pop Up Container
+function showPreview(div) {
+  playSoundEffect("select");
+  removePopClass();
+  div.classList.add("active");
+  div.classList.remove("closed");
+  overlay.style.display = "block";
+}
+
+function hidePreview(div) {
+  playSoundEffect("close");
+  removePopClass();
+  div.classList.remove("active");
+  div.classList.add("closed");
+  overlay.style.display = "none";
+}
+
+function removePopClass() {
+  document.querySelectorAll(".pop-container").forEach((container) => {
+    // Remove classes from the pop-container itself
+    container.classList.remove("closed", "active");
+  });
+}
+
+function mainMenu() {
+  startMenu.style.display = "flex";
+  gameOverElement.style.display = "none";
+  hidePreview(formfinish);
+  hidePreview(pauseModal);
+  playMusic();
+}
+
+// Function to pause the game
+function pauseMenu() {
+  showPreview(pauseModal);
+  togglePause();
+}
+
+function unpauseMenu() {
+  hidePreview(pauseModal);
+  togglePause();
+}
+
+function pauseGame() {
+  if (!isPaused) {
+    isPaused = true; // Set the game state to paused
+    gameStarted = false;
+    cancelAnimationFrame(animationId); // Stop the game loop
+    clearInterval(obstacleInterval); // Stop obstacle creation
+    clearInterval(coinInterval); // Stop coin creation
+    clearInterval(scoreInterval); // Stop score updates
+    sounds.backgroundMusic.pause(); // Pause background music
+  }
+}
+
+// Function to unpause the game
+function unpauseGame() {
+  if (isPaused) {
+    isPaused = false; // Set the game state to running
+    gameStarted = true;
+    updateGame(); // Restart the game loop
+    if (isMusicOn) {
+      sounds.backgroundMusic.play(); // Resume background music
+    }
+
+    // Restart intervals
+    obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
+    coinInterval = setInterval(createCoin, 3000);
+    scoreInterval = setInterval(() => {
+      score++;
+      // Increase obstacle spawn rate every 10 seconds
+      if (score % 20 === 0) {
+        updateObstacleSpawnRate();
+      }
+    }, 100);
+  }
+}
+
+// Function to toggle pause/unpause
+function togglePause() {
+  if (isPaused) {
+    unpauseGame(); // Call unpause function if currently paused
+  } else {
+    pauseGame(); // Call pause function if currently running
+  }
+}
+
+// Leaderboard Modal
+leaderboardButton.addEventListener("click", function () {
+  document.getElementById("winner-iframe").src = "leaderboard.html";
+  leaderboardModal.style.display = "flex";
+});
+
+// How to play Modal
+
+// Credit Modal
+
+// game-btn to handle the click and touch events
+document.querySelectorAll(".game-button").forEach((button) => {
+  const toggleActiveClass = () => {
+    button.classList.toggle("active"); // Toggle the active class
+  };
+
+  button.addEventListener("click", toggleActiveClass); // Handle click event
+  button.addEventListener("touchstart", toggleActiveClass); // Handle touch event
+});
 
 gameArea.addEventListener("mousedown", (e) => {
   if (!gameStarted) return;
@@ -436,43 +612,9 @@ gameArea.addEventListener("touchend", () => {
   isDragging = false;
 });
 
-restartButton.addEventListener("click", startGame);
 startButton.addEventListener("click", startGame);
 
-// Don't start the game immediately
-// startGame();
-document.addEventListener("DOMContentLoaded", function () {
-  updatePlayerPosition();
-});
-
-leaderboardButton.addEventListener("click", function () {
-  leaderboardModal.style.display = "flex";
-});
-
-closeButton.addEventListener("click", function () {
-  leaderboardModal.style.display = "none";
-});
-
-window.onclick = function (event) {
-  if (event.target === leaderboardModal) {
-    leaderboardModal.style.display = "none";
-  }
-};
-
-howtoplayButton.addEventListener("click", function () {
-  howtoplayModal.style.display = "flex";
-});
-
-howtoplayClose.addEventListener("click", function () {
-  howtoplayModal.style.display = "none";
-});
-
-window.onclick = function (event) {
-  if (event.target === howtoplayModal) {
-    howtoplayModal.style.display = "none";
-  }
-};
-
+// Add an event listener for a key press to control the player movement
 document.addEventListener("keydown", (e) => {
   if (!gameStarted) return;
   if (e.key === "ArrowLeft") {
@@ -484,23 +626,33 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-homeButton.addEventListener("click", function () {
-  startMenu.style.display = "flex"; // Show the start menu
-  gameOverElement.style.display = "none"; // Hide game over screen if it's visible
-  leaderboardFormdiv.style.display = "none"; // Hide leaderboard form if it's visible
-  // Optionally reset the game state or any other necessary elements
+// Add an event listener for a key press to toggle pause
+document.addEventListener("keydown", (e) => {
+  if (e.key === "p") {
+    // Press 'p' to toggle pause/unpause
+    togglePause();
+  }
 });
 
-jQuery(document).ready(function ($) {
-  $.ajax({
-    url: "https://www.axs.com.sg/axs-drive-game-leaderboard/", // Adjust the path to your PHP file
-    type: "POST",
-    success: function (response) {
-      console.log(response);
-      // $("#leaderboard").html(response); // Update the HTML with the response
-    },
-    error: function () {
-      console.log("Error retrieving data.");
-    },
-  });
+// function scaleMain() {
+//   const slotMain = document.querySelector(".gameArea-background");
+//   const scaleFactor = Math.min(window.innerWidth / 300); // Adjust these values as needed
+//   console.log(window.innerWidth);
+//   console.log(scaleFactor);
+//   slotMain.style.transform = `scale(${Math.min(scaleFactor, 1)})`; // Cap scale at 1
+// }
+
+// // Call the function on load and resize
+// window.addEventListener("resize", scaleMain);
+
+// // Hide loading indicator when the page is fully loaded
+// window.addEventListener("load", function () {
+//   scaleMain();
+// });
+
+// Don't start the game immediately
+document.addEventListener("DOMContentLoaded", function () {
+  preloadSounds();
+  updatePlayerPosition();
+  playMusic();
 });

@@ -4,76 +4,177 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Speed Fever</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
     <div class="gameArea-background">
+      <!-- Score -->
+      <div id="score">Score: 0</div>
+
+      <!-- Game Canvas Screen -->
       <canvas id="gameCanvas" width="500" height="800"></canvas>
+
+      <!-- Game Menu Screen -->
       <div id="startMenu">
-        <img src="assets/axs-speed-fever.png" class="speed-title" />
-        <!-- <h1>Car Park Racing</h1> -->
-        <div class="game-button" id="startButton"><img src="assets/start-btn.png" /></div>
-        <div class="game-button" id="leaderboardButton">
-          <img src="assets/leaderboard-btn.png" />
+        <div class="setting-button game-button" id="settingBtn" onclick="showPreview(settingModal)">
+          <img src="assets/setting.png" class="setting-img" />
         </div>
-        <div class="game-button" id="howtoplayButton"><img src="assets/how-btn.png" /></div>
+        <img src="assets/axs-speed-fever.png" class="speed-title" />
+        <div class="game-menu-button-main">
+          <div class="game-button menu-button" id="startButton">
+            <img src="assets/start-btn.png" />
+          </div>
+          <div
+            class="game-button menu-button"
+            id="leaderboardButton"
+            onclick="showPreview(leaderboardModal)">
+            <img src="assets/leaderboard-btn.png" />
+          </div>
+          <div
+            class="game-button menu-button"
+            id="howtoplayButton"
+            onclick="showPreview(howtoplayModal)">
+            <img src="assets/how-btn.png" />
+          </div>
+          <div class="game-button menu-button" id="creditButton" onclick="showPreview(creditModal)">
+            <img src="assets/credit-btn.png" />
+          </div>
+        </div>
       </div>
+
+      <!-- Game Over Screen -->
       <div id="gameOver">
-        <div>Game Over</div>
-        <div id="finalScore"></div>
-        <div class="game-button" id="restartButton"><img src="assets/restart-btn.png" /></div>
-        <div class="game-button" id="homeButton"><img src="assets/home-btn.png" /></div>
+        <div class="gameOver-info">
+          <div>Game Over</div>
+          <div id="finalScore"></div>
+        </div>
+        <div class="gameOver-menu">
+          <div class="game-button" onclick="startGame()"><img src="assets/restart-btn.png" /></div>
+          <div class="game-button" onclick="mainMenu()"><img src="assets/home-btn.png" /></div>
+        </div>
       </div>
-      <div id="gameArea">
+
+      <!-- Game Area Screen -->
+      <div class="pause-button game-button" id="pauseBtn" onclick="pauseMenu()">
+        <img src="assets/pause-btn.png" />
+      </div>
+      <div id="gameArea" class="disabled">
         <div id="countdown"></div>
         <div id="player"></div>
         <img id="explosion" src="assets/explosion.gif" alt="Explosion" />
       </div>
-      <div id="leaderboardModal">
-        <p>Leaderboard</p>
-        <div id="leaderboard"></div>
-        <div id="leaderboardClose">X</div>
-      </div>
-      <div id="howtoplayModal">
-        <p>How to Play</p>
-        <div id="howtoplay"></div>
-        <div id="howtoplayClose">X</div>
-      </div>
-      <div id="score">Score: 0</div>
-      <div id="form-finish" class="form-finish">
-        <form id="leaderboardForm">
-          <h3>Enter your name for the leaderboard:</h3>
-          <input type="text" id="playerName" placeholder="Name" required />
-          <input type="text" id="playerEmail" placeholder="Email" required />
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-    </div>
-    <div style="display: none">
-      <input type="checkbox" id="scoreOverTime" checked />
-      <label class="score-setting" for="scoreOverTime">Increase score over time</label>
-    </div>
-    <audio id="coinSound" src="sound/coin-sound.mp3"></audio>
-    <!-- Add your coin sound file here -->
-    <audio id="explosionSound" src="sound/explosion-sound.mp3"></audio>
-    <!-- Add your explosion sound file here -->
-    <audio id="backgroundMusic" src="sound/background-music.mp3" loop></audio>
-    <!-- Add your background music file here -->
-    <audio id="passThroughSound1" src="sound/pass-through-sound1.mp3"></audio>
-    <!-- Add your pass-through sound file 1 here -->
-    <audio id="passThroughSound2" src="sound/pass-through-sound2.mp3"></audio>
-    <!-- Add your pass-through sound file 2 here -->
-    <audio id="passThroughSound3" src="sound/pass-through-sound3.mp3"></audio>
-    <!-- Add your pass-through sound file 3 here -->
-    <audio id="passThroughSound4" src="sound/pass-through-sound4.mp3"></audio>
-    <!-- Add your pass-through sound file 4 here -->
-    <audio id="countdownSound" src="sound/countdown-sound.mp3"></audio>
-    <!-- Add your countdown sound file here -->
-    <audio id="startSound" src="sound/start-sound.mp3"></audio>
-    <!-- Add your start sound file here -->
-    <audio id="laneChangeSound" src="sound/lane-change-sound.mp3"></audio>
-    <!-- Add your lane change sound file here -->
 
+      <!-- Setting Screen -->
+      <div id="settingModal" class="pop-container">
+        <div class="pop-container-inner">
+          <p class="modal-title">Options</p>
+          <div class="pop-container-info">
+            <div class="setting-row">
+              <span>Music:</span>
+              <div
+                class="checkbox-main game-button"
+                id="music-setting"
+                onclick="toggleMusicSetting()">
+                <img
+                  class="checkbox-tick-img"
+                  id="music-tick"
+                  src="/assets/checkbox-tick.png"
+                  style="display: block" />
+              </div>
+            </div>
+            <div class="setting-row">
+              <span>Sound Effect:</span>
+              <div
+                class="checkbox-main game-button"
+                id="effect-setting"
+                onclick="toggleSoundIcon()">
+                <img
+                  class="checkbox-tick-img"
+                  id="effect-tick"
+                  src="/assets/checkbox-tick.png"
+                  style="display: block" />
+              </div>
+            </div>
+          </div>
+          <div class="closeBtn game-button" id="settingClose" onclick="hidePreview(settingModal)">
+            <img src="/assets/close.png" class="close-img" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Pause Screen -->
+      <div id="pauseModal" class="pop-container closed">
+        <div class="pop-container-inner">
+          <p class="modal-title">Pause</p>
+          <div class="pop-container-info">
+            <div class="game-button" onclick="startGame()">
+              <img src="assets/restart-btn.png" />
+            </div>
+            <div class="game-button" onclick="mainMenu()"><img src="assets/home-btn.png" /></div>
+          </div>
+          <div class="closeBtn game-button" id="pauseClose" onclick="unpauseMenu()">X</div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Screen -->
+      <div id="leaderboardModal" class="pop-container">
+        <div class="pop-container-inner">
+          <p class="modal-title">Leaderboard</p>
+          <div id="leaderboard">
+            <iframe id="winner-iframe" src="" width="100%" height="500" frameborder="0"></iframe>
+          </div>
+          <div
+            class="closeBtn game-button"
+            id="leaderboardClose"
+            onclick="hidePreview(leaderboardModal)">
+            <img src="/assets/close.png" class="close-img" />
+          </div>
+        </div>
+      </div>
+
+      <!-- HTP Screen -->
+      <div id="howtoplayModal" class="pop-container">
+        <div class="pop-container-inner">
+          <p class="modal-title">How to Play</p>
+          <div id="howtoplay"></div>
+          <div
+            class="closeBtn game-button"
+            id="howtoplayClose"
+            onclick="hidePreview(howtoplayModal)">
+            <img src="/assets/close.png" class="close-img" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Credit Screen -->
+      <div id="creditModal" class="pop-container">
+        <div class="pop-container-inner">
+          <p class="modal-title">Credits</p>
+          <div id="credit"></div>
+          <div class="closeBtn game-button" id="creditClose" onclick="hidePreview(creditModal)">
+            <img src="/assets/close.png" class="close-img" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Input Screen -->
+      <div id="formfinish" class="form-finish pop-container">
+        <div class="pop-container-inner">
+          <form id="leaderboardForm">
+            <h3>Enter your name for the leaderboard:</h3>
+            <input type="text" id="playerName" placeholder="Name" required />
+            <input type="text" id="playerEmail" placeholder="Email" required />
+            <button type="submit">Submit</button>
+          </form>
+          <div class="closeBtn game-button" id="inputClose" onclick="hidePreview(formfinish)">
+            <img src="/assets/close.png" class="close-img" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay -->
+      <div class="overlay" id="overlay"></div>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="script.js"></script>
   </body>
