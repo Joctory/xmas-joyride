@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Speed Fever</title>
+    <title>AXS Drive: Christmas Joyride</title>
     <link href="css/style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
@@ -16,10 +16,31 @@
 
       <!-- Game Menu Screen -->
       <div id="startMenu">
-        <div class="setting-button game-button" id="settingBtn" onclick="showPreview(settingModal)">
-          <img src="assets/setting.png" class="setting-img" />
+        <img src="/assets/title-car.png" class="title-car" />
+        <div class="more-menu">
+          <div
+            class="setting-button game-button"
+            id="settingBtn"
+            onclick="showPreview(settingModal)">
+            <img src="assets/setting.png" class="setting-img" />
+          </div>
+          <div
+            class="setting-button game-button"
+            id="howtoplayButton"
+            onclick="showPreview(howtoplayModal)">
+            <img src="assets/htp.png" class="setting-img" />
+          </div>
+          <div
+            class="setting-button game-button"
+            id="creditButton"
+            onclick="showPreview(creditModal)">
+            <img src="assets/credit.png" class="setting-img" />
+          </div>
         </div>
-        <img src="assets/axs-speed-fever.png" class="speed-title" />
+        <div class="title-logo-main">
+          <img src="assets/axs-logo.png" class="axs-title" />
+          <img src="assets/xmas-logo.png" class="speed-title" />
+        </div>
         <div class="game-menu-button-main">
           <div class="game-button menu-button" id="startButton">
             <img src="assets/start-btn.png" />
@@ -29,15 +50,6 @@
             id="leaderboardButton"
             onclick="showPreview(leaderboardModal)">
             <img src="assets/leaderboard-btn.png" />
-          </div>
-          <div
-            class="game-button menu-button"
-            id="howtoplayButton"
-            onclick="showPreview(howtoplayModal)">
-            <img src="assets/how-btn.png" />
-          </div>
-          <div class="game-button menu-button" id="creditButton" onclick="showPreview(creditModal)">
-            <img src="assets/credit-btn.png" />
           </div>
         </div>
       </div>
@@ -95,10 +107,24 @@
                   style="display: block" />
               </div>
             </div>
+            <div class="setting-row setting-tnc">
+              <span id="link-tnc" onclick="showPreview(tncModal)">Terms and Conditions</span>
+            </div>
           </div>
           <div class="closeBtn game-button" id="settingClose" onclick="hidePreview(settingModal)">
             <img src="/assets/close.png" class="close-img" />
           </div>
+        </div>
+      </div>
+
+      <!-- T&C Screen -->
+      <div id="tncModal" class="pop-container">
+        <div class="pop-container-inner">
+          <p class="modal-title">Terms and Conditions</p>
+          <div class="pop-container-info">
+            <p>Terms and Condition,Terms and Conditions</p>
+          </div>
+          <div class="closeBtn game-button" id="pauseClose" onclick="unpauseMenu()">X</div>
         </div>
       </div>
 
@@ -107,7 +133,7 @@
         <div class="pop-container-inner">
           <p class="modal-title">Pause</p>
           <div class="pop-container-info">
-            <div class="game-button" onclick="startGame()">
+            <div class="game-button" onclick="restartGame()">
               <img src="assets/restart-btn.png" />
             </div>
             <div class="game-button" onclick="mainMenu()"><img src="assets/home-btn.png" /></div>
@@ -150,7 +176,9 @@
       <div id="creditModal" class="pop-container">
         <div class="pop-container-inner">
           <p class="modal-title">Credits</p>
-          <div id="credit"></div>
+          <div id="credit">
+            <p>Artwork and assets by AXS CEO - Janelle</p>
+          </div>
           <div class="closeBtn game-button" id="creditClose" onclick="hidePreview(creditModal)">
             <img src="/assets/close.png" class="close-img" />
           </div>
