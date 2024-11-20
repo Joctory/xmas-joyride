@@ -17,6 +17,7 @@ const effectButton = document.getElementById("effect-setting");
 const leaderboardButton = document.getElementById("leaderboardButton");
 const leaderboardModal = document.getElementById("leaderboardModal");
 const closeButton = document.getElementById("leaderboardClose");
+const winneriframe = document.getElementById("winner-iframe");
 // Add event listeners for how to play modal
 const howtoplayButton = document.getElementById("howtoplayButton");
 const howtoplayModal = document.getElementById("howtoplayModal");
@@ -621,8 +622,9 @@ function getGameCookie(cname) {
 
 // Leaderboard Modal
 leaderboardButton.addEventListener("click", function () {
-  document.getElementById("winner-iframe").src = "leaderboard.html";
-  leaderboardModal.style.display = "flex";
+  winneriframe.src = "leaderboard.html";
+  winneriframe.setAttribute("scrolling", "no");
+  winneriframe.style.overflow = "hidden";
 });
 
 // How to play Modal

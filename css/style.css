@@ -14,6 +14,10 @@
   box-sizing: border-box !important;
 }
 
+body {
+  touch-action: pan-y pan-x;
+}
+
 img {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -340,6 +344,10 @@ button {
   z-index: 9;
 }
 
+#finalScore {
+  text-align: center;
+}
+
 .score-setting {
   color: #fff;
 }
@@ -466,6 +474,16 @@ button {
   /* padding: 10px; */
   box-sizing: border-box;
   overflow: auto;
+  pointer-events: none;
+  overflow: hidden;
+  touch-action: none;
+}
+
+#winner-iframe {
+  pointer-events: none;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-overflow-scrolling: unset;
 }
 
 #leaderboard .row {
