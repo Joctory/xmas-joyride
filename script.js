@@ -90,21 +90,27 @@ function preloadSounds() {
 function checkOptions(option) {
   let musicSetting = getGameCookie("drive-game-music");
   let effectSetting = getGameCookie("drive-game-effect");
+  let firstvisit = getGameCookie("drive-game-first");
 
   // Check if cookies are null and set them to true if so
-  if (musicSetting === null) {
+  if (musicSetting === "unset") {
     musicSetting = 1; // Set to true
     setGameCookie("music", musicSetting);
   }
 
-  if (effectSetting === null) {
+  if (effectSetting === "unset") {
     effectSetting = 1; // Set to true
     setGameCookie("effect", effectSetting);
   }
 
+  if (firstvisit === "unset") {
+    firstvisit = 0; // Set to true
+    setGameCookie("first", firstvisit);
+  }
+
   // Set music and sound effects based on cookie values
-  isMusicOn = musicSetting === 1; // Assuming 1 means true
-  areSoundEffectsOn = effectSetting === 1; // Assuming 1 means true
+  isMusicOn = musicSetting; // Assuming 1 means true
+  areSoundEffectsOn = effectSetting; // Assuming 1 means true
 
   // Update UI elements accordingly
   const musicTick = document.getElementById("music-tick");
@@ -253,22 +259,12 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return (
-      x < obstacleRect.right &&
-      x + 20 > obstacleRect.left &&
-      y < obstacleRect.bottom &&
-      y + 20 > obstacleRect.top
-    );
+    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
   });
 }
 
 function checkCollision(rect1, rect2) {
-  return (
-    rect1.left < rect2.right &&
-    rect1.right > rect2.left &&
-    rect1.top < rect2.bottom &&
-    rect1.bottom > rect2.top
-  );
+  return rect1.left < rect2.right && rect1.right > rect2.left && rect1.top < rect2.bottom && rect1.bottom > rect2.top;
 }
 
 function updateGame() {
@@ -281,14 +277,14 @@ function updateGame() {
     const top = parseInt(obstacle.style.top);
     obstacle.style.top = `${top + speed}px`;
 
-    // Randomly change lane with a 0.5% chance per frame
-    if (Math.random() < 0.005) {
+    // Randomly change lane with a 0.1% chance per frame
+    if (Math.random() < 0.003) {
       const currentLane = parseInt(obstacle.dataset.lane);
       const obstacleRect = obstacle.getBoundingClientRect();
       const playerRect = player.getBoundingClientRect();
 
       // Only change lanes if the obstacle is not too close to the player
-      if (obstacleRect.bottom < playerRect.top - 150) {
+      if (obstacleRect.bottom < playerRect.top - 200) {
         let newLane;
 
         if (currentLane === 0) {
@@ -339,7 +335,7 @@ function updateGame() {
     }
   });
 
-  speed += 0.004;
+  speed += 0.003; //Speed Adjust
   scoreElement.textContent = `Score: ${score}`;
   animationId = requestAnimationFrame(updateGame);
 }
@@ -362,19 +358,12 @@ function setPlayerLane(x) {
   const newLane = Math.max(0, Math.min(2, Math.floor(x / laneWidth)));
   const oldLane = Math.floor(playerX / laneWidth);
 
-  if (newLane !== oldLane) {
-    // Delete
-    const landsounds = [landsounds1, landsounds2];
-    const randomlaneSound = landsounds[Math.floor(Math.random() * landsounds.length)];
-    randomlaneSound.play();
-  }
+  // if (newLane !== oldLane) {
+  // }
 
   playerX = Math.max(
     0,
-    Math.min(
-      gameArea.clientWidth - playerWidth,
-      newLane * laneWidth + (laneWidth - playerWidth) / 2
-    )
+    Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2)
   );
   updatePlayerPosition();
 }
@@ -384,6 +373,7 @@ function startGame() {
   sounds.titleMusic.pause();
   startMenu.style.display = "none";
   pauseButton.style.display = "none";
+  setGameCookie("first", 1);
   drawBackground();
   gameStarted = true;
   isPaused = false;
@@ -392,6 +382,7 @@ function startGame() {
   scoreElement.textContent = `Score: ${score}`;
   speed = 2;
   obstacleSpawnRate = 2000; // Reset spawn rate
+  player.classList.add("player-init");
   setPlayerLane(gameArea.clientWidth / 2); // Set to middle lane using setPlayerLane
   obstacles.forEach((obstacle) => gameArea.removeChild(obstacle));
   coins.forEach((coin) => gameArea.removeChild(coin));
@@ -429,6 +420,7 @@ function startGame() {
           }
         }, 100);
         pauseButton.style.display = "block";
+        player.classList.remove("player-init");
       }, 1000);
     }
   }, 1000);
@@ -452,6 +444,17 @@ function gameOver() {
   // Play explosion sound
   playSoundEffect("explosionSound");
 
+  // Get the current obstacle's lane
+  const playerRect = player.getBoundingClientRect();
+  const collidedObstacle = obstacles.find((obstacle) => checkCollision(playerRect, obstacle.getBoundingClientRect()));
+
+  if (collidedObstacle) {
+    const obstacleLane = parseInt(collidedObstacle.dataset.lane);
+    const laneWidth = gameArea.clientWidth / 3;
+    playerX = obstacleLane * laneWidth + (laneWidth - playerWidth) / 2; // Set player position to the obstacle's lane
+    updatePlayerPosition(); // Update the player's position on the screen
+  }
+
   // Disable touch in game area
   gameArea.classList.add("disabled");
 
@@ -465,8 +468,6 @@ function gameOver() {
   setTimeout(() => {
     gameOverElement.style.display = "flex";
     finalScoreElement.textContent = `Final Score: ${score}`;
-    // Delete
-    failed.play();
     showLeaderboardForm(score);
     explosion.style.display = "none";
   }, 1500); // Adjust this time based on your explosion GIF duration
@@ -606,14 +607,13 @@ function setGameCookie(cname, cvalue) {
 
 // Get Cookies
 function getGameCookie(cname) {
-  // Check the current total game entries from the cookie
   const cookies = document.cookie.split("; ");
-  let cvalue = 0;
+  let cvalue = "unset"; // Default to "unset"
 
   cookies.forEach((cookie) => {
     const [name, value] = cookie.split("=");
     if (name === cname) {
-      cvalue = parseInt(value) || 0;
+      cvalue = parseInt(value); // Set cvalue only if the cookie matches
     }
   });
   return cvalue;
