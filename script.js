@@ -30,8 +30,8 @@ const overlay = document.getElementById("overlay");
 let gameStarted = false;
 let score = 0;
 let speed = 2;
-let playerX = 150;
-const playerWidth = 30;
+let playerX = 140;
+const playerWidth = 40;
 const playerHeight = 50;
 
 const obstacles = [];
@@ -47,8 +47,9 @@ let obstacleChangeInterval;
 let obstacleSpawnRate = 2000; // Initial spawn rate in milliseconds
 
 const obstacleTypes = ["obstacle-1", "obstacle-2", "obstacle-3", "obstacle-4", "obstacle-5"];
-const weak = new Audio("sound/weak.mp3");
-const laneChangeSound = document.getElementById("laneChangeSound");
+const failed = new Audio("sound/failed.mp3");
+const landsounds1 = new Audio("sound/change1.mp3");
+const landsounds2 = new Audio("sound/change2.mp3");
 
 // Variable to track the pause state
 let isPaused = false;
@@ -85,14 +86,49 @@ function preloadSounds() {
   sounds.laneChangeSound = new Audio("/sound/lane-change-sound.mp3");
 }
 
+// Function to check settings
+function checkOptions(option) {
+  let musicSetting = getGameCookie("drive-game-music");
+  let effectSetting = getGameCookie("drive-game-effect");
+
+  // Check if cookies are null and set them to true if so
+  if (musicSetting === null) {
+    musicSetting = 1; // Set to true
+    setGameCookie("music", musicSetting);
+  }
+
+  if (effectSetting === null) {
+    effectSetting = 1; // Set to true
+    setGameCookie("effect", effectSetting);
+  }
+
+  // Set music and sound effects based on cookie values
+  isMusicOn = musicSetting === 1; // Assuming 1 means true
+  areSoundEffectsOn = effectSetting === 1; // Assuming 1 means true
+
+  // Update UI elements accordingly
+  const musicTick = document.getElementById("music-tick");
+  const effectTick = document.getElementById("effect-tick");
+
+  musicTick.style.display = isMusicOn ? "block" : "none"; // Show or hide music tick
+  effectTick.style.display = areSoundEffectsOn ? "block" : "none"; // Show or hide effect tick
+
+  // Play music if enabled
+  if (isMusicOn) {
+    playMusic(); // Play music if the music setting is enabled
+  }
+}
+
 // Function to toggle sound effects
 function toggleSoundIcon() {
   const effectTick = document.getElementById("effect-tick");
   if (effectTick.style.display === "none" || effectTick.style.display === "") {
     areSoundEffectsOn = true;
+    setGameCookie("effect", 1);
     effectTick.style.display = "block"; // Show the tick image
   } else {
     areSoundEffectsOn = false;
+    setGameCookie("effect", 0);
     effectTick.style.display = "none"; // Hide the tick image
   }
 }
@@ -117,10 +153,12 @@ function toggleMusicSetting() {
   if (musicTick.style.display === "none" || musicTick.style.display === "") {
     isMusicOn = true;
     playMusic();
+    setGameCookie("music", 1);
     musicTick.style.display = "block"; // Show the tick image
   } else {
     isMusicOn = false;
     sounds.titleMusic.pause(); // Stop the music
+    setGameCookie("music", 0);
     musicTick.style.display = "none"; // Hide the tick image
   }
 }
@@ -324,9 +362,12 @@ function setPlayerLane(x) {
   const newLane = Math.max(0, Math.min(2, Math.floor(x / laneWidth)));
   const oldLane = Math.floor(playerX / laneWidth);
 
-  //if (newLane !== oldLane) {
-  //  laneChangeSound.play();
-  //}
+  if (newLane !== oldLane) {
+    // Delete
+    const landsounds = [landsounds1, landsounds2];
+    const randomlaneSound = landsounds[Math.floor(Math.random() * landsounds.length)];
+    randomlaneSound.play();
+  }
 
   playerX = Math.max(
     0,
@@ -340,7 +381,6 @@ function setPlayerLane(x) {
 
 function startGame() {
   if (gameStarted) return;
-  hidePreview(pauseModal);
   sounds.titleMusic.pause();
   startMenu.style.display = "none";
   pauseButton.style.display = "none";
@@ -394,6 +434,11 @@ function startGame() {
   }, 1000);
 }
 
+function restartGame() {
+  hidePreview(pauseModal);
+  startGame();
+}
+
 function gameOver() {
   gameStarted = false;
   isGameOver = true;
@@ -412,7 +457,7 @@ function gameOver() {
 
   // Show explosion
   const explosion = document.getElementById("explosion");
-  explosion.style.left = `${playerX - 35}px`;
+  explosion.style.left = `${playerX - 30}px`;
   explosion.style.top = `${player.offsetTop - 30}px`;
   explosion.style.display = "block";
 
@@ -420,7 +465,8 @@ function gameOver() {
   setTimeout(() => {
     gameOverElement.style.display = "flex";
     finalScoreElement.textContent = `Final Score: ${score}`;
-    weak.play();
+    // Delete
+    failed.play();
     showLeaderboardForm(score);
     explosion.style.display = "none";
   }, 1500); // Adjust this time based on your explosion GIF duration
@@ -553,6 +599,26 @@ function togglePause() {
   }
 }
 
+// Set Cookies
+function setGameCookie(cname, cvalue) {
+  document.cookie = `drive-game-${cname}=${cvalue}; path=/;`;
+}
+
+// Get Cookies
+function getGameCookie(cname) {
+  // Check the current total game entries from the cookie
+  const cookies = document.cookie.split("; ");
+  let cvalue = 0;
+
+  cookies.forEach((cookie) => {
+    const [name, value] = cookie.split("=");
+    if (name === cname) {
+      cvalue = parseInt(value) || 0;
+    }
+  });
+  return cvalue;
+}
+
 // Leaderboard Modal
 leaderboardButton.addEventListener("click", function () {
   document.getElementById("winner-iframe").src = "leaderboard.html";
@@ -653,6 +719,6 @@ document.addEventListener("keydown", (e) => {
 // Don't start the game immediately
 document.addEventListener("DOMContentLoaded", function () {
   preloadSounds();
+  checkOptions();
   updatePlayerPosition();
-  playMusic();
 });
