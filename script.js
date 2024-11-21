@@ -1,6 +1,7 @@
 const gameArea = document.getElementById("gameArea");
 const countdownDiv = document.getElementById("countdown");
 const player = document.getElementById("player");
+const startline = document.getElementById("startline");
 const scoreElement = document.getElementById("score");
 const gameOverElement = document.getElementById("gameOver");
 const finalScoreElement = document.getElementById("finalScore");
@@ -10,6 +11,8 @@ const pauseButton = document.getElementById("pauseBtn");
 const leaderboardFormdiv = document.getElementById("formfinish");
 const leaderboardForm = document.getElementById("leaderboardForm");
 const pauseModal = document.getElementById("pauseModal");
+const formLoader = document.getElementById("form-loader");
+const submitError = document.getElementById("submit-error");
 // Options
 const musicButton = document.getElementById("music-setting");
 const effectButton = document.getElementById("effect-setting");
@@ -27,6 +30,9 @@ const creditButton = document.getElementById("creditButton");
 const creditModal = document.getElementById("creditModal");
 const creditClose = document.getElementById("creditClose");
 const overlay = document.getElementById("overlay");
+// Input Form
+const playerNameInput = document.getElementById("playerName");
+const playerEmailInput = document.getElementById("playerEmail");
 
 let gameStarted = false;
 let score = 0;
@@ -117,8 +123,13 @@ function checkOptions(option) {
   const musicTick = document.getElementById("music-tick");
   const effectTick = document.getElementById("effect-tick");
 
-  musicTick.style.display = isMusicOn ? "block" : "none"; // Show or hide music tick
-  effectTick.style.display = areSoundEffectsOn ? "block" : "none"; // Show or hide effect tick
+  if (isMusicOn == 0) {
+    musicTick.style.display = "none";
+  }
+
+  if (areSoundEffectsOn == 0) {
+    effectTick.style.display = "none";
+  }
 
   // Play music if enabled
   if (isMusicOn) {
@@ -260,12 +271,22 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
+    return (
+      x < obstacleRect.right &&
+      x + 20 > obstacleRect.left &&
+      y < obstacleRect.bottom &&
+      y + 20 > obstacleRect.top
+    );
   });
 }
 
 function checkCollision(rect1, rect2) {
-  return rect1.left < rect2.right && rect1.right > rect2.left && rect1.top < rect2.bottom && rect1.bottom > rect2.top;
+  return (
+    rect1.left < rect2.right &&
+    rect1.right > rect2.left &&
+    rect1.top < rect2.bottom &&
+    rect1.bottom > rect2.top
+  );
 }
 
 function updateGame() {
@@ -364,7 +385,10 @@ function setPlayerLane(x) {
 
   playerX = Math.max(
     0,
-    Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2)
+    Math.min(
+      gameArea.clientWidth - playerWidth,
+      newLane * laneWidth + (laneWidth - playerWidth) / 2
+    )
   );
   updatePlayerPosition();
 }
@@ -372,6 +396,7 @@ function setPlayerLane(x) {
 function startGame() {
   if (gameStarted) return;
   sounds.titleMusic.pause();
+  startline.classList.remove("started");
   startMenu.style.display = "none";
   pauseButton.style.display = "none";
   setGameCookie("first", 1);
@@ -391,6 +416,12 @@ function startGame() {
   coins.length = 0;
   gameOverElement.style.display = "none";
 
+  // Check for existing user details
+  const userName = getGameCookie("drive-game-name");
+  const userEmail = getGameCookie("drive-game-email");
+  playerNameInput.value = userName;
+  playerEmailInput.value = userEmail;
+
   // Add countdown before starting the game
   countdownDiv.style.display = "block";
 
@@ -409,6 +440,7 @@ function startGame() {
         if (isMusicOn) {
           sounds.backgroundMusic.play();
         }
+        startline.classList.add("started");
         gameArea.classList.remove("disabled");
         updateGame();
         obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
@@ -447,7 +479,9 @@ function gameOver() {
 
   // Get the current obstacle's lane
   const playerRect = player.getBoundingClientRect();
-  const collidedObstacle = obstacles.find((obstacle) => checkCollision(playerRect, obstacle.getBoundingClientRect()));
+  const collidedObstacle = obstacles.find((obstacle) =>
+    checkCollision(playerRect, obstacle.getBoundingClientRect())
+  );
 
   if (collidedObstacle) {
     const obstacleLane = parseInt(collidedObstacle.dataset.lane);
@@ -462,13 +496,13 @@ function gameOver() {
   // Show explosion
   const explosion = document.getElementById("explosion");
   explosion.style.left = `${playerX - 30}px`;
-  explosion.style.top = `${player.offsetTop - 30}px`;
+  explosion.style.top = `${player.offsetTop - 20}px`;
   explosion.style.display = "block";
 
   // Hide explosion and show game over screen after animation
   setTimeout(() => {
     gameOverElement.style.display = "flex";
-    finalScoreElement.textContent = `Final Score: ${score}`;
+    finalScoreElement.textContent = `${score}`;
     showLeaderboardForm(score);
     explosion.style.display = "none";
   }, 1500); // Adjust this time based on your explosion GIF duration
@@ -478,12 +512,10 @@ function showLeaderboardForm(newScore) {
   showPreview(formfinish);
   document.getElementById("leaderboardForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    const playerNameInput = document.getElementById("playerName");
-    const playerEmailInput = document.getElementById("playerEmail");
     const playerName = playerNameInput.value;
     const playerEmail = playerEmailInput.value;
     if (playerName) {
-      hidePreview(formfinish);
+      formLoader.style.display = "flex";
       $.ajax({
         url: "https://www.axs.com.sg/drive-winner-form/", // Replace with the path to your PHP file
         type: "POST",
@@ -494,14 +526,20 @@ function showLeaderboardForm(newScore) {
           submit_winner: true, // Indicate that the form is submitted
         },
         success: function (response) {
-          alert("Score submitted successfully!");
+          formLoader.style.display = "none";
+          submitError.style.display = "none";
+          hidePreview(formfinish);
           playerNameInput.value = ""; // Clear the input field
           playerEmailInput.value = ""; // Clear the input field
+          setGameCookie("name", playerName);
+          setGameCookie("email", playerEmail);
         },
         error: function (xhr, status, error) {
           // Handle error response
           console.error(error);
-          // alert("An error occurred while submitting the score.");
+          formLoader.style.display = "none";
+          submitError.style.display = "block";
+          alert("An error occurred while submitting the score.");
         },
       });
     }
@@ -539,6 +577,12 @@ function removePopClass() {
 }
 
 function mainMenu() {
+  startMenu.style.display = "flex";
+  gameOverElement.style.display = "none";
+  playMusic();
+}
+
+function backtomainMenu() {
   startMenu.style.display = "flex";
   gameOverElement.style.display = "none";
   hidePreview(formfinish);
@@ -614,7 +658,7 @@ function getGameCookie(cname) {
   cookies.forEach((cookie) => {
     const [name, value] = cookie.split("=");
     if (name === cname) {
-      cvalue = parseInt(value); // Set cvalue only if the cookie matches
+      cvalue = value; // Set cvalue only if the cookie matches
     }
   });
   return cvalue;

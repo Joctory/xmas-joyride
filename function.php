@@ -1,9 +1,8 @@
 <?php
-
 // Function to create the form and process submission
 function add_winner_shortcode()
 {
-    ob_start(); // Start output buffering
+    //     ob_start(); // Start output buffering
 
     // Retrieve the winner score from the URL using the GET method
     $winner_score = isset($_GET['score']) ? intval($_GET['score']) : 0; // Default to 0 if not provided
@@ -36,11 +35,13 @@ function add_winner_shortcode()
 
                 // Get the current score and update it
                 $current_score = get_field('winner_score', $post_id);
-                $new_score = $current_score + $winner_score; // Add the new score to the current score
-
-                // Update the fields
-                update_field('winner_name', $winner_name, $post_id); // Update name if needed
-                update_field('winner_score', $new_score, $post_id);  // Update score
+                $new_score = $winner_score; // Add the new score to the current score
+                //If new score is higher than current score
+                if ($winner_score > $current_score) {
+                    // Update the fields
+                    update_field('winner_name', $winner_name, $post_id); // Update name if needed
+                    update_field('winner_score', $new_score, $post_id);  // Update score
+                }
 
                 echo '<p>Winner score updated successfully!</p>';
             } else {
@@ -74,23 +75,7 @@ function add_winner_shortcode()
         }
     }
 
-    // Form HTML
-?>
-    <form method="POST">
-        <label for="winner_name">Winner Name:</label>
-        <input type="text" id="winner_name" name="winner_name" required>
-
-        <label for="winner_email">Winner Email:</label>
-        <input type="email" id="winner_email" name="winner_email" required>
-
-        <!-- Hidden field for winner score retrieved from the URL -->
-        <input type="hidden" id="winner_score" name="winner_score" value="<?php echo $winner_score; ?>">
-
-        <input type="submit" name="submit_winner" value="Submit Winner">
-    </form>
-<?php
-
-    return ob_get_clean(); // Return the output buffer content
+    //     return ob_get_clean(); // Return the output buffer content
 }
 
 // Register the shortcode
