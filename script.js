@@ -1,10 +1,15 @@
 const gameArea = document.getElementById("gameArea");
+const HTPgameArea = document.getElementById("htpgameArea");
 const countdownDiv = document.getElementById("countdown");
 const player = document.getElementById("player");
+const HTPplayer = document.getElementById("htpplayer");
 const startline = document.getElementById("startline");
 const scoreElement = document.getElementById("score");
+const coinElement = document.getElementById("coin");
 const gameOverElement = document.getElementById("gameOver");
 const finalScoreElement = document.getElementById("finalScore");
+const explosion = document.getElementById("explosion");
+const HTPexplosion = document.getElementById("htpexplosion");
 const startMenu = document.getElementById("startMenu");
 const startButton = document.getElementById("startButton");
 const pauseButton = document.getElementById("pauseBtn");
@@ -13,6 +18,7 @@ const leaderboardForm = document.getElementById("leaderboardForm");
 const pauseModal = document.getElementById("pauseModal");
 const formLoader = document.getElementById("form-loader");
 const submitError = document.getElementById("submit-error");
+let previousLane = null; // Variable to track the previous lane
 // Options
 const musicButton = document.getElementById("music-setting");
 const effectButton = document.getElementById("effect-setting");
@@ -33,6 +39,12 @@ const overlay = document.getElementById("overlay");
 // Input Form
 const playerNameInput = document.getElementById("playerName");
 const playerEmailInput = document.getElementById("playerEmail");
+// How to play Section
+const HTPdiv = document.getElementById("htp-div");
+// Variable to track coins collected
+let goldCoinsCollected = 0;
+let silverCoinsCollected = 0;
+let bronzeCoinsCollected = 0;
 
 let gameStarted = false;
 let score = 0;
@@ -132,7 +144,7 @@ function checkOptions(option) {
   }
 
   // Play music if enabled
-  if (isMusicOn) {
+  if (isMusicOn == 1) {
     playMusic(); // Play music if the music setting is enabled
   }
 }
@@ -141,11 +153,11 @@ function checkOptions(option) {
 function toggleSoundIcon() {
   const effectTick = document.getElementById("effect-tick");
   if (effectTick.style.display === "none" || effectTick.style.display === "") {
-    areSoundEffectsOn = true;
+    areSoundEffectsOn = 1;
     setGameCookie("effect", 1);
     effectTick.style.display = "block"; // Show the tick image
   } else {
-    areSoundEffectsOn = false;
+    areSoundEffectsOn = 0;
     setGameCookie("effect", 0);
     effectTick.style.display = "none"; // Hide the tick image
   }
@@ -155,7 +167,7 @@ function toggleSoundIcon() {
 function playSoundEffect(soundKey) {
   const sound = sounds[soundKey];
 
-  if (sound && areSoundEffectsOn) {
+  if (sound && areSoundEffectsOn == 1) {
     // Set the new sound as the current sound effect
     currentSoundEffect = sound;
 
@@ -183,7 +195,7 @@ function toggleMusicSetting() {
 
 // Function to play music
 function playMusic() {
-  if (isMusicOn) {
+  if (isMusicOn == 1) {
     sounds.titleMusic.loop = true; // Optional: Loop the music
     sounds.titleMusic.currentTime = 0;
     sounds.titleMusic.play();
@@ -210,6 +222,11 @@ function updatePlayerPosition() {
   if (playerX < 0) playerX = 0;
   if (playerX > gameArea.clientWidth - playerWidth) playerX = gameArea.clientWidth - playerWidth;
   player.style.left = `${playerX}px`;
+  // Add a smooth transition for lane changes
+  player.style.transition = "left 0.3s ease-in-out";
+  setTimeout(() => {
+    player.style.transition = "";
+  }, 300);
 }
 
 function createObstacle() {
@@ -226,6 +243,7 @@ function createObstacle() {
   obstacle.style.left = `${x}px`;
   obstacle.style.top = "-50px";
   obstacle.dataset.lane = lane;
+  obstacle.dataset.previousLane = lane; // Store the initial lane
   gameArea.appendChild(obstacle);
   obstacles.push(obstacle);
 }
@@ -271,22 +289,12 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return (
-      x < obstacleRect.right &&
-      x + 20 > obstacleRect.left &&
-      y < obstacleRect.bottom &&
-      y + 20 > obstacleRect.top
-    );
+    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
   });
 }
 
 function checkCollision(rect1, rect2) {
-  return (
-    rect1.left < rect2.right &&
-    rect1.right > rect2.left &&
-    rect1.top < rect2.bottom &&
-    rect1.bottom > rect2.top
-  );
+  return rect1.left < rect2.right && rect1.right > rect2.left && rect1.top < rect2.bottom && rect1.bottom > rect2.top;
 }
 
 function updateGame() {
@@ -298,6 +306,27 @@ function updateGame() {
   obstacles.forEach((obstacle, index) => {
     const top = parseInt(obstacle.style.top);
     obstacle.style.top = `${top + speed}px`;
+
+    // Get the current lane of the obstacle
+    const currentLane = parseInt(obstacle.dataset.lane);
+    const previousLane = parseInt(obstacle.dataset.previousLane);
+
+    // Check if the obstacle is turning left or right
+    if (currentLane !== previousLane) {
+      if (currentLane < previousLane) {
+        obstacle.style.animation = "carleft 0.3s ease-in-out forwards";
+      } else {
+        obstacle.style.animation = "carright 0.3s ease-in-out forwards";
+      }
+
+      // Reset the animation after it completes
+      setTimeout(() => {
+        obstacle.style.animation = "";
+      }, 300);
+    }
+
+    // Update the previous lane for the next frame
+    obstacle.dataset.previousLane = currentLane;
 
     // Randomly change lane with a 0.1% chance per frame
     if (Math.random() < 0.003) {
@@ -353,7 +382,22 @@ function updateGame() {
       gameArea.removeChild(coin);
       coins.splice(index, 1);
       score += parseInt(coin.dataset.value);
+      coinElement.textContent = `+ ${coin.dataset.value}`;
+      coinElement.classList.add("show");
+      setTimeout(() => {
+        coinElement.classList.remove("show");
+      }, 800);
       playSoundEffect("coinSound");
+
+      // Update coin collection counts
+      const coinType = coin.className.split("-")[1]; // Get the type of coin from its class
+      if (coinType === "gold") {
+        goldCoinsCollected++;
+      } else if (coinType === "silver") {
+        silverCoinsCollected++;
+      } else if (coinType === "bronze") {
+        bronzeCoinsCollected++;
+      }
     }
   });
 
@@ -370,7 +414,7 @@ function playRandomPassThroughSound() {
     sounds.passThroughSound4,
   ];
   const randomSound = passsounds[Math.floor(Math.random() * passsounds.length)];
-  if (areSoundEffectsOn) {
+  if (areSoundEffectsOn == 1) {
     randomSound.play();
   }
 }
@@ -378,27 +422,55 @@ function playRandomPassThroughSound() {
 function setPlayerLane(x) {
   const laneWidth = gameArea.clientWidth / 3;
   const newLane = Math.max(0, Math.min(2, Math.floor(x / laneWidth)));
-  const oldLane = Math.floor(playerX / laneWidth);
 
-  // if (newLane !== oldLane) {
-  // }
+  // Check if the lane has changed
+  if (previousLane !== null && newLane !== previousLane) {
+    if (newLane < previousLane) {
+      player.classList.add("player-left");
+      setTimeout(() => {
+        player.classList.remove("player-left");
+      }, 300);
+    } else {
+      player.classList.add("player-right");
+      setTimeout(() => {
+        player.classList.remove("player-right");
+      }, 300);
+    }
+  }
+
+  previousLane = newLane; // Update the previous lane
 
   playerX = Math.max(
     0,
-    Math.min(
-      gameArea.clientWidth - playerWidth,
-      newLane * laneWidth + (laneWidth - playerWidth) / 2
-    )
+    Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2)
   );
   updatePlayerPosition();
 }
 
+function startHTP() {
+  if (gameStarted) return;
+  player.style.display = "none";
+  HTPdiv.style.display = "block";
+  startline.style.display = "none";
+  drawBackground();
+  startMenu.style.display = "none";
+  // Show explosion
+  // explosion.style.left = `${playerX - 30}px`;
+  // explosion.style.top = `${player.offsetTop - 20}px`;
+  // explosion.style.display = "block";
+}
+
 function startGame() {
   if (gameStarted) return;
-  sounds.titleMusic.pause();
+  player.style.display = "block";
+  HTPdiv.style.display = "none";
+  startline.style.display = "block";
   startline.classList.remove("started");
+  player.style.display = "none";
   startMenu.style.display = "none";
   pauseButton.style.display = "none";
+  player.style.backgroundImage = "url('/assets/player.png')";
+  sounds.titleMusic.pause();
   setGameCookie("first", 1);
   drawBackground();
   gameStarted = true;
@@ -408,8 +480,6 @@ function startGame() {
   scoreElement.textContent = `Score: ${score}`;
   speed = 2;
   obstacleSpawnRate = 2000; // Reset spawn rate
-  player.classList.add("player-init");
-  setPlayerLane(gameArea.clientWidth / 2); // Set to middle lane using setPlayerLane
   obstacles.forEach((obstacle) => gameArea.removeChild(obstacle));
   coins.forEach((coin) => gameArea.removeChild(coin));
   obstacles.length = 0;
@@ -419,11 +489,18 @@ function startGame() {
   // Check for existing user details
   const userName = getGameCookie("drive-game-name");
   const userEmail = getGameCookie("drive-game-email");
-  playerNameInput.value = userName;
-  playerEmailInput.value = userEmail;
+  if (userName !== "unset") {
+    playerNameInput.value = userName;
+  }
+  if (userEmail !== "unset") {
+    playerEmailInput.value = userEmail;
+  }
 
   // Add countdown before starting the game
   countdownDiv.style.display = "block";
+
+  setPlayerLane(gameArea.clientWidth / 2); // Set to middle lane using setPlayerLane
+  player.classList.add("player-init");
 
   let countdown = 3;
   const countdownInterval = setInterval(() => {
@@ -431,13 +508,14 @@ function startGame() {
     // Play countdown sound effect;
     playSoundEffect("countdownSound");
     countdown--;
+    player.style.display = "block";
     if (countdown < 0) {
       clearInterval(countdownInterval);
       countdownDiv.textContent = "START";
       setTimeout(() => {
         countdownDiv.style.display = "none";
         countdownDiv.textContent = "";
-        if (isMusicOn) {
+        if (isMusicOn == 1) {
           sounds.backgroundMusic.play();
         }
         startline.classList.add("started");
@@ -457,6 +535,11 @@ function startGame() {
       }, 1000);
     }
   }, 1000);
+
+  // Reset coin collected counts
+  goldCoinsCollected = 0;
+  silverCoinsCollected = 0;
+  bronzeCoinsCollected = 0;
 }
 
 function restartGame() {
@@ -479,9 +562,7 @@ function gameOver() {
 
   // Get the current obstacle's lane
   const playerRect = player.getBoundingClientRect();
-  const collidedObstacle = obstacles.find((obstacle) =>
-    checkCollision(playerRect, obstacle.getBoundingClientRect())
-  );
+  const collidedObstacle = obstacles.find((obstacle) => checkCollision(playerRect, obstacle.getBoundingClientRect()));
 
   if (collidedObstacle) {
     const obstacleLane = parseInt(collidedObstacle.dataset.lane);
@@ -494,7 +575,6 @@ function gameOver() {
   gameArea.classList.add("disabled");
 
   // Show explosion
-  const explosion = document.getElementById("explosion");
   explosion.style.left = `${playerX - 30}px`;
   explosion.style.top = `${player.offsetTop - 20}px`;
   explosion.style.display = "block";
@@ -503,8 +583,16 @@ function gameOver() {
   setTimeout(() => {
     gameOverElement.style.display = "flex";
     finalScoreElement.textContent = `${score}`;
+
+    // Display collected coins
+    document.getElementById("goldCoinsSpan").textContent = goldCoinsCollected;
+    document.getElementById("silverCoinsSpan").textContent = silverCoinsCollected;
+    document.getElementById("bronzeCoinsSpan").textContent = bronzeCoinsCollected;
+
     showLeaderboardForm(score);
     explosion.style.display = "none";
+    // Change player background image to player-crash.gif
+    player.style.backgroundImage = "url('/assets/player-crash.gif')";
   }, 1500); // Adjust this time based on your explosion GIF duration
 }
 
@@ -619,7 +707,7 @@ function unpauseGame() {
     isPaused = false; // Set the game state to running
     gameStarted = true;
     updateGame(); // Restart the game loop
-    if (isMusicOn) {
+    if (isMusicOn == 1) {
       sounds.backgroundMusic.play(); // Resume background music
     }
 

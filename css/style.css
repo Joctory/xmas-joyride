@@ -65,7 +65,8 @@ body {
   touch-action: none;
 }
 
-#gameArea {
+#gameArea,
+#htpgameArea {
   width: 57%;
   max-width: 300px;
   position: relative;
@@ -75,6 +76,67 @@ body {
 
 .disabled {
   pointer-events: none;
+}
+
+.htp-div {
+  display: none;
+  width: 100%;
+  height: 100%;
+  max-width: 500px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url(/assets/road.png);
+  background-size: cover;
+  z-index: 5;
+}
+
+#htpgameArea {
+  height: 100%;
+  position: absolute;
+}
+
+#htp-main {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: all;
+}
+
+#htp-main .htp-coin-gold,
+#htp-main .htp-coin-silver,
+#htp-main .htp-coin-bronze,
+#htp-main .htp-obstacle,
+#htp-main #htpplayer,
+#htp-main #htpexplosion {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#htp-main .htp-coin-gold {
+  bottom: 500px;
+}
+
+#htp-main .htp-coin-silver {
+  bottom: 400px;
+}
+
+#htp-main .htp-coin-bronze {
+  bottom: 300px;
+}
+
+#htp-main .htp-obstacle {
+  bottom: 100px;
+}
+
+#htp-main #htpplayer {
+}
+
+#htp-main #htpexplosion {
+  bottom: 50px;
 }
 
 #gameCanvas {
@@ -103,14 +165,15 @@ body {
 
 #startline.started {
   bottom: -260px;
-  transition: bottom 2.25s linear;
+  transition: bottom 2.55s linear;
 }
 
 .startline-img {
   width: 100%;
 }
 
-#player {
+#player,
+#htpplayer {
   width: 40px;
   height: 51px;
   background-image: url("/assets/player.png"); /* Replace with your player image */
@@ -120,6 +183,14 @@ body {
 
 #player.player-init {
   animation: playerinit 1.5s linear 0s forwards;
+}
+
+#player.player-left {
+  animation: carleft 0.3s ease-in-out forwards;
+}
+
+#player.player-right {
+  animation: carright 0.3s ease-in-out forwards;
 }
 
 .obstacle {
@@ -176,7 +247,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -252,7 +323,8 @@ body {
   display: none;
 }
 
-#explosion {
+#explosion,
+#htpexplosion {
   position: absolute;
   display: none;
   width: 100px;
@@ -350,18 +422,42 @@ button {
   max-width: 250px;
 }
 
-#score {
+.score-info {
   position: absolute;
   top: 20px;
+  z-index: 9;
+}
+
+#score {
   color: #fff;
   background-color: #000;
   font-size: 12px;
   padding: 5px;
-  z-index: 9;
+}
+
+#coin {
+  opacity: 0;
+  text-align: center;
+  color: #fff;
+  background-color: #000;
+  font-size: 12px;
+  padding: 5px;
+  margin-top: 15px;
+}
+
+#coin.show {
+  animation: coinshow 0.8s ease-in-out forwards;
 }
 
 #finalScore {
   text-align: center;
+}
+
+#coinCounts {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .score-setting {
@@ -666,7 +762,7 @@ button {
 @keyframes titlecar {
   0% {
     transform: scale(0);
-    bottom: 6.9vh;
+    bottom: 4vh;
     opacity: 1;
   }
   10% {
@@ -721,12 +817,66 @@ button {
 
 @keyframes playerinit {
   0% {
+    opacity: 0;
     transform: translate(200%, 200%);
   }
   50% {
+    opacity: 1;
     transform: translate(200%, 100%);
   }
   100% {
+    opacity: 1;
     transform: translate(0%, 0%);
+  }
+}
+
+@keyframes carleft {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes carright {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes coinshow {
+  0% {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(-20px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-10px);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-10px);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0px);
   }
 }
