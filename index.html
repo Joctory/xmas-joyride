@@ -2,8 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>AXS Drive: Christmas Joyride</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
@@ -15,19 +18,28 @@
       </div>
 
       <!-- Game Canvas Screen -->
-      <canvas id="gameCanvas" width="500" height="800"></canvas>
+      <canvas id="gameCanvas" width="500" height="2000"></canvas>
 
       <!-- Game Menu Screen -->
       <div id="startMenu">
         <img src="/assets/title-car.png" class="title-car" />
         <div class="more-menu">
-          <div class="setting-button game-button" id="settingBtn" onclick="showPreview(settingModal)">
+          <div
+            class="setting-button game-button"
+            id="settingBtn"
+            onclick="showPreview(settingModal)">
             <img src="assets/setting.png" class="setting-img" />
           </div>
-          <div class="setting-button game-button" id="howtoplayButton" onclick="startHTP(howtoplayModal)">
+          <div
+            class="setting-button game-button"
+            id="howtoplayButton"
+            onclick="startHTP(howtoplayModal)">
             <img src="assets/htp.png" class="setting-img" />
           </div>
-          <div class="setting-button game-button" id="creditButton" onclick="showPreview(creditModal)">
+          <div
+            class="setting-button game-button"
+            id="creditButton"
+            onclick="showPreview(creditModal)">
             <img src="assets/credit.png" class="setting-img" />
           </div>
         </div>
@@ -36,10 +48,13 @@
           <img src="assets/xmas-logo.png" class="speed-title" />
         </div>
         <div class="game-menu-button-main">
-          <div class="game-button menu-button" id="startButton">
+          <div class="game-button menu-button" id="startButton" onclick="initStart()">
             <img src="assets/start-btn.png" />
           </div>
-          <div class="game-button menu-button" id="leaderboardButton" onclick="showPreview(leaderboardModal)">
+          <div
+            class="game-button menu-button"
+            id="leaderboardButton"
+            onclick="showPreview(leaderboardModal)">
             <img src="assets/leaderboard-btn.png" />
           </div>
         </div>
@@ -52,9 +67,18 @@
           <div class="finalscore-title">Final Score:</div>
           <div id="finalScore"></div>
           <div id="coinCounts">
-            <div id="goldCoins">Gold Coins: <span id="goldCoinsSpan"></span></div>
-            <div id="silverCoins">Silver Coins: <span id="silverCoinsSpan"></span></div>
-            <div id="bronzeCoins">Bronze Coins: <span id="bronzeCoinsSpan"></span></div>
+            <div id="goldCoins">
+              <img src="/assets/coin-gold.png" class="gameOver-coin" />
+              <span id="goldCoinsSpan"></span>
+            </div>
+            <div id="silverCoins">
+              <img src="/assets/coin-silver.png" class="gameOver-coin" />
+              <span id="silverCoinsSpan"></span>
+            </div>
+            <div id="bronzeCoins">
+              <img src="/assets/coin-bronze.png" class="gameOver-coin" />
+              <span id="bronzeCoinsSpan"></span>
+            </div>
           </div>
         </div>
         <div class="gameOver-menu">
@@ -83,9 +107,13 @@
             <div class="coin coin-gold htp-coin-gold"></div>
             <div class="coin coin-silver htp-coin-silver"></div>
             <div class="coin coin-bronze htp-coin-bronze"></div>
-            <div class="obstacle obstacle-2 htp-obstacle" onclick="mainMenu()"></div>
-            <div id="htpplayer"></div>
-            <img id="htpexplosion" src="assets/explosion.gif" alt="Explosion" />
+            <div id="htp-car-crash-part">
+              <div class="obstacle obstacle-2 htp-obstacle" onclick="mainMenu()"></div>
+              <div id="htp-car-crash">
+                <div id="htpplayer"></div>
+                <img id="htpexplosion" src="assets/explosion.gif" alt="Explosion" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -93,23 +121,34 @@
       <!-- Setting Screen -->
       <div id="settingModal" class="pop-container">
         <div class="pop-container-inner">
-          <p class="modal-title">Options</p>
+          <div class="pop-container-inner-head">
+            <p class="modal-title">Options</p>
+          </div>
           <div class="pop-container-info">
             <div class="setting-row">
               <span>Music:</span>
-              <div class="checkbox-main game-button" id="music-setting" onclick="toggleMusicSetting()">
-                <img class="checkbox-tick-img" id="music-tick" src="/assets/checkbox-tick.png" style="display: block" />
+              <div
+                class="checkbox-main game-button"
+                id="music-setting"
+                onclick="toggleMusicSetting()">
+                <img
+                  class="checkbox-tick-img"
+                  id="music-tick"
+                  src="/assets/checkbox-tick.png"
+                  style="display: block" />
               </div>
             </div>
             <div class="setting-row">
               <span>Sound Effect:</span>
-              <div class="checkbox-main game-button" id="effect-setting" onclick="toggleSoundIcon()">
+              <div
+                class="checkbox-main game-button"
+                id="effect-setting"
+                onclick="toggleSoundIcon()">
                 <img
                   class="checkbox-tick-img"
                   id="effect-tick"
                   src="/assets/checkbox-tick.png"
-                  style="display: block"
-                />
+                  style="display: block" />
               </div>
             </div>
             <div class="setting-row setting-tnc">
@@ -125,36 +164,43 @@
       <!-- T&C Screen -->
       <div id="tncModal" class="pop-container">
         <div class="pop-container-inner">
-          <p class="modal-title">Terms and Conditions</p>
+          <div class="pop-container-inner-head">
+            <p class="modal-title">Terms and Conditions</p>
+          </div>
           <div class="pop-container-info">
             <div class="tnc-inner">
               <p>
-                These terms and conditions outline the rules and regulations for the use of Company Name's Website,
-                located at Website.com.
+                These terms and conditions outline the rules and regulations for the use of Company
+                Name's Website, located at Website.com.
               </p>
               <p>
-                By accessing this website we assume you accept these terms and conditions. Do not continue to use
-                Website Name if you do not agree to take all of the terms and conditions stated on this page.
+                By accessing this website we assume you accept these terms and conditions. Do not
+                continue to use Website Name if you do not agree to take all of the terms and
+                conditions stated on this page.
               </p>
               <p>
-                The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice
-                and all Agreements: “Client”, “You” and “Your” refers to you, the person log on this website and
-                compliant to the Company's terms and conditions. “The Company”, “Ourselves”, “We”, “Our” and “Us”,
-                refers to our Company. “Party”, “Parties”, or “Us”, refers to both the Client and ourselves. All terms
-                refer to the offer, acceptance and consideration of payment necessary to undertake the process of our
-                assistance to the Client in the most appropriate manner for the express purpose of meeting the Client's
-                needs in respect of provision of the Company's stated services, in accordance with and subject to,
-                prevailing law of Netherlands. Any use of the above terminology or other words in the singular, plural,
-                capitalization and/or he/she or they, are taken as interchangeable and therefore as referring to same.
+                The following terminology applies to these Terms and Conditions, Privacy Statement
+                and Disclaimer Notice and all Agreements: “Client”, “You” and “Your” refers to you,
+                the person log on this website and compliant to the Company's terms and conditions.
+                “The Company”, “Ourselves”, “We”, “Our” and “Us”, refers to our Company. “Party”,
+                “Parties”, or “Us”, refers to both the Client and ourselves. All terms refer to the
+                offer, acceptance and consideration of payment necessary to undertake the process of
+                our assistance to the Client in the most appropriate manner for the express purpose
+                of meeting the Client's needs in respect of provision of the Company's stated
+                services, in accordance with and subject to, prevailing law of Netherlands. Any use
+                of the above terminology or other words in the singular, plural, capitalization
+                and/or he/she or they, are taken as interchangeable and therefore as referring to
+                same.
               </p>
               <p>
-                We employ the use of cookies. By accessing Website Name, you agreed to use cookies in agreement with the
-                Company Name's Privacy Policy.
+                We employ the use of cookies. By accessing Website Name, you agreed to use cookies
+                in agreement with the Company Name's Privacy Policy.
               </p>
               <p>
-                Most interactive websites use cookies to let us retrieve the user's details for each visit. Cookies are
-                used by our website to enable the functionality of certain areas to make it easier for people visiting
-                our website. Some of our affiliate/advertising partners may also use cookies.
+                Most interactive websites use cookies to let us retrieve the user's details for each
+                visit. Cookies are used by our website to enable the functionality of certain areas
+                to make it easier for people visiting our website. Some of our affiliate/advertising
+                partners may also use cookies.
               </p>
             </div>
           </div>
@@ -167,7 +213,9 @@
       <!-- Pause Screen -->
       <div id="pauseModal" class="pop-container closed">
         <div class="pop-container-inner">
-          <p class="modal-title">Pause</p>
+          <div class="pop-container-inner-head">
+            <p class="modal-title">Pause</p>
+          </div>
           <div class="pop-container-info">
             <div class="game-button" onclick="restartGame()">
               <img src="assets/restart-btn.png" />
@@ -185,11 +233,16 @@
       <!-- Leaderboard Screen -->
       <div id="leaderboardModal" class="pop-container">
         <div class="pop-container-inner">
-          <p class="modal-title">Leaderboard</p>
-          <div id="leaderboard">
+          <div class="pop-container-inner-head">
+            <p class="modal-title">Leaderboard</p>
+          </div>
+          <div id="leaderboard" class="pop-container-info">
             <iframe id="winner-iframe" src="" width="100%" height="500" frameborder="0"></iframe>
           </div>
-          <div class="closeBtn game-button" id="leaderboardClose" onclick="hidePreview(leaderboardModal)">
+          <div
+            class="closeBtn game-button"
+            id="leaderboardClose"
+            onclick="hidePreview(leaderboardModal)">
             <img src="/assets/close.png" class="close-img" />
           </div>
         </div>
@@ -200,7 +253,10 @@
         <div class="pop-container-inner">
           <p class="modal-title">How to Play</p>
           <div id="howtoplay"></div>
-          <div class="closeBtn game-button" id="howtoplayClose" onclick="hidePreview(howtoplayModal)">
+          <div
+            class="closeBtn game-button"
+            id="howtoplayClose"
+            onclick="hidePreview(howtoplayModal)">
             <img src="/assets/close.png" class="close-img" />
           </div>
         </div>
@@ -209,9 +265,13 @@
       <!-- Credit Screen -->
       <div id="creditModal" class="pop-container">
         <div class="pop-container-inner">
-          <p class="modal-title">Credits</p>
-          <div id="credit">
-            <p>Artwork and assets by AXS CEO - Janelle</p>
+          <div class="pop-container-inner-head">
+            <p class="modal-title">Credits</p>
+          </div>
+          <div class="pop-container-info">
+            <div id="credit">
+              <p>Artwork and assets by AXS CEO - Janelle</p>
+            </div>
           </div>
           <div class="closeBtn game-button" id="creditClose" onclick="hidePreview(creditModal)">
             <img src="/assets/close.png" class="close-img" />
@@ -230,6 +290,9 @@
             <button class="form-submit-button game-button" type="submit">
               <img src="/assets/submit-btn.png" class="form-submit-img" />
             </button>
+            <div class="form-skip-button game-button" onclick="hidePreview(formfinish)">
+              <img src="/assets/skip-btn.png" class="form-submit-img" />
+            </div>
           </form>
           <div id="form-loader" class="form-loader">
             <dotlottie-player
@@ -237,8 +300,7 @@
               background="transparent"
               speed="1"
               loop
-              autoplay
-            ></dotlottie-player>
+              autoplay></dotlottie-player>
           </div>
           <div class="closeBtn game-button" id="inputClose" onclick="hidePreview(formfinish)">
             <img src="/assets/close.png" class="close-img" />
@@ -249,8 +311,11 @@
       <!-- Overlay -->
       <div class="overlay" id="overlay"></div>
     </div>
-    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <script
+      src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
+      type="module"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>

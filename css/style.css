@@ -56,7 +56,7 @@ body {
   width: 100%;
   height: 100%;
   max-width: 500px;
-  max-height: 1000px;
+  max-height: 1500px;
   display: flex;
   justify-content: center;
   border: 1px solid black;
@@ -67,8 +67,8 @@ body {
 
 #gameArea,
 #htpgameArea {
-  width: 57%;
-  max-width: 300px;
+  width: 66%;
+  max-width: 330px;
   position: relative;
   overflow: hidden;
   touch-action: none;
@@ -92,11 +92,15 @@ body {
 }
 
 #htpgameArea {
+  width: 100%;
+  max-width: 100%;
   height: 100%;
   position: absolute;
+  left: 0;
 }
 
 #htp-main {
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -110,10 +114,17 @@ body {
 #htp-main .htp-coin-bronze,
 #htp-main .htp-obstacle,
 #htp-main #htpplayer,
-#htp-main #htpexplosion {
+#htp-main #htpexplosion,
+#htp-main #htp-car-crash-part {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+}
+
+#htp-main #htp-car-crash-part {
+  bottom: 50px;
+  width: 100px;
+  height: 185px;
 }
 
 #htp-main .htp-coin-gold {
@@ -129,14 +140,84 @@ body {
 }
 
 #htp-main .htp-obstacle {
-  bottom: 100px;
+  bottom: 90px;
 }
 
 #htp-main #htpplayer {
+  bottom: 0px;
+  transition: bottom 0.5s ease-in-out;
+}
+
+#htp-main #htpplayer.played {
+  bottom: 27px;
 }
 
 #htp-main #htpexplosion {
-  bottom: 50px;
+  bottom: 15px;
+}
+
+/* HTP Driver */
+.HTParea {
+  border-radius: 0;
+  border: 4px solid #000;
+  background-color: #2bbfcf;
+  -webkit-box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
+  -moz-box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
+  box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
+}
+
+.driver-popover-arrow-side-top.driver-popover-arrow-align-end {
+  left: 50px;
+  right: auto;
+}
+
+.driver-popover-title,
+.driver-popover-description {
+  text-align: center;
+  font-family: "Press Start 2P", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.driver-popover-title {
+  font-size: 1rem !important;
+}
+
+.driver-popover-description {
+  font-size: 0.7rem !important;
+  margin-top: 15px !important;
+  margin-bottom: 10px !important;
+}
+
+.driver-popover-navigation-btns {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.driver-popover-prev-btn,
+.driver-popover-next-btn {
+  width: 50% !important;
+  text-align: center !important;
+  font-family: "Press Start 2P", system-ui !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  border-radius: 0 !important;
+  height: 50px !important;
+  font-size: 0.65rem !important;
+  color: #fff !important;
+  text-shadow: none !important;
+}
+
+.driver-popover-prev-btn {
+  background-color: #fa8132 !important;
+  border: 2px solid #000 !important;
+}
+
+.driver-popover-next-btn {
+  background-color: #88e060 !important;
+  border: 2px solid #000 !important;
 }
 
 #gameCanvas {
@@ -144,7 +225,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: auto;
   background-image: url("/assets/road.png");
   background-size: cover;
 }
@@ -159,12 +240,14 @@ body {
 
 #startline {
   width: 100%;
-  bottom: 100px;
+  max-width: 318px;
+  bottom: 120px;
+  left: 6px;
   position: absolute;
 }
 
 #startline.started {
-  bottom: -260px;
+  bottom: -265px;
   transition: bottom 2.55s linear;
 }
 
@@ -174,8 +257,8 @@ body {
 
 #player,
 #htpplayer {
-  width: 40px;
-  height: 51px;
+  width: 54px;
+  height: 71px;
   background-image: url("/assets/player.png"); /* Replace with your player image */
   background-size: cover;
   bottom: 50px;
@@ -194,8 +277,8 @@ body {
 }
 
 .obstacle {
-  width: 30px;
-  height: 50px;
+  width: 45px;
+  height: 72px;
   background-size: cover;
   z-index: 5;
 }
@@ -222,8 +305,8 @@ body {
 
 .coin {
   position: absolute;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -247,7 +330,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -302,7 +385,7 @@ body {
 .title-car {
   position: absolute;
   bottom: 0;
-  width: 45%;
+  width: 50%;
   opacity: 0;
   animation: titlecar 15s linear 1s infinite;
 }
@@ -368,6 +451,8 @@ button {
 }
 
 #link-tnc {
+  position: absolute;
+  bottom: 20px;
   font-size: 0.9rem;
   text-align: center;
   text-decoration: underline;
@@ -451,9 +536,31 @@ button {
 
 #finalScore {
   text-align: center;
+  font-size: 2.5rem;
+  padding: 10px 20px;
+  border: 4px solid #000;
+  background-color: #2bbfcf;
+  -webkit-box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
+  -moz-box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
+  box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
+}
+
+.gameOver-coin {
+  width: 40px;
+  margin-bottom: 10px;
 }
 
 #coinCounts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-top: 10px;
+}
+
+#goldCoins,
+#silverCoins,
+#bronzeCoins {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -492,6 +599,11 @@ button {
   width: 100%;
 }
 
+#pauseModal {
+  min-height: 30vh;
+  max-height: 30px;
+}
+
 .pause-button {
   width: 3vh;
   min-width: 30px;
@@ -509,8 +621,9 @@ button {
   visibility: hidden;
   opacity: 0;
   width: 85%;
-  min-height: 50vh;
-  height: auto;
+  min-height: 40vh;
+  height: 100%;
+  max-height: 50vh;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -532,22 +645,49 @@ button {
 
 .pop-container-inner {
   width: 100%;
+  height: 100%;
+  display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 
+.pop-container-inner-head {
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20%;
+  background-color: #ab3213;
+  border: 3px solid rgb(123, 35, 14);
+}
+
+/* .pop-container-inner-head::after {
+  content: "";
+  width: 110%;
+  height: 110%;
+  position: absolute;
+  bottom: -50%;
+  background-image: url("/assets/header-ribbon.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+} */
+
 .pop-container-info {
   width: 100%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: #fff;
   gap: 20px;
 }
 
 .modal-title {
   text-align: center;
+  color: #fff;
 }
 
 .closeBtn {
@@ -573,10 +713,15 @@ button {
 
 /* Leaderboard */
 #leaderboardModal {
+  max-height: 65vh;
   background-color: #ffda44;
   -webkit-box-shadow: inset 4px -4px 0px 0px #cda400, inset -4px 4px 0px 0px #ffe990;
   -moz-box-shadow: inset 4px -4px 0px 0px #cda400, inset -4px 4px 0px 0px #ffe990;
   box-shadow: inset 4px -4px 0px 0px #cda400, inset -4px 4px 0px 0px #ffe990;
+}
+
+#leaderboardModal .pop-container-inner-head {
+  height: 20%;
 }
 
 #leaderboard {
@@ -645,8 +790,9 @@ button {
 #leaderboardForm {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
+  height: 100%;
 }
 
 #leaderboardForm input {
@@ -677,9 +823,14 @@ button {
 }
 
 #leaderboardForm .form-submit-button {
+  margin-top: 8px;
+  margin-bottom: 4px;
   padding: 0;
   border: 0;
   background: none;
+}
+
+#leaderboardForm .form-skip-button {
 }
 
 #submit-error {
