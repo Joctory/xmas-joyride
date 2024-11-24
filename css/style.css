@@ -450,6 +450,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 5px;
+  z-index: 3;
 }
 
 #gameOver {
