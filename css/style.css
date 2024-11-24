@@ -917,6 +917,10 @@ button {
   text-align: center;
 }
 
+#credit p {
+  font-size: 0.9rem;
+}
+
 /* overlay */
 .overlay {
   display: none;
@@ -1107,7 +1111,7 @@ button {
   }
   10% {
     transform: scale(0.2);
-    bottom: 100%;
+    bottom: 99%;
     opacity: 1;
   }
   30% {
