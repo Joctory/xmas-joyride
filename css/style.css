@@ -1017,7 +1017,7 @@ button {
 }
 
 @media screen and (min-width: 800px) {
-  .game-container {
+  .gameArea-background {
     position: absolute;
     top: 50%;
     left: 50%;
