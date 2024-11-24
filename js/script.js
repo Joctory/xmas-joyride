@@ -1,3 +1,4 @@
+/* Developed by Joel Lee @ Joasis Web */
 const gameArea = document.getElementById("gameArea");
 const countdownDiv = document.getElementById("countdown");
 const player = document.getElementById("player");
@@ -89,7 +90,7 @@ let backgroundPositionY = 0;
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const backgroundImage = new Image();
-backgroundImage.src = "assets/road.png"; // Your background image
+backgroundImage.src = "https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/road.png"; // Your background image
 
 let yOffset = 0;
 
@@ -492,7 +493,7 @@ function startHTP() {
 
 function resetHTP() {
   HTPplayer.classList.remove("played");
-  HTPplayer.style.backgroundImage = "url('/assets/player.png')";
+  HTPplayer.style.backgroundImage = "url('https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/player.png')";
 }
 
 function preStartGame() {
@@ -517,7 +518,7 @@ function startGame() {
   driveXmasTitle.classList.remove("entrance");
   startline.classList.remove("started");
   finalScoreElement.classList.remove("scale");
-  player.style.backgroundImage = "url('/assets/player.png')";
+  player.style.backgroundImage = "url('https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/player.png')";
   sounds.titleMusic.pause();
   setGameCookie("first", 1);
   drawBackground();
@@ -685,7 +686,8 @@ function gameOver() {
     showLeaderboardForm(score);
     explosion.style.display = "none";
     // Change player background image to player-crash.gif
-    player.style.backgroundImage = "url('/assets/player-crash.gif')";
+    player.style.backgroundImage =
+      "url('https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/player-crash.gif')";
   }, 1500); // Adjust this time based on your explosion GIF duration
 }
 
@@ -1086,7 +1088,8 @@ const htpdriver = driver({
             setTimeout(() => {
               HTPexplosion.style.display = "none";
               // Change player background image to player-crash.gif
-              HTPplayer.style.backgroundImage = "url('/assets/player-crash.gif')";
+              HTPplayer.style.backgroundImage =
+                "url('https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/player-crash.gif')";
               document.querySelector(".driver-popover-navigation-btns").style.display = "flex";
             }, 1800);
           }, 500);
