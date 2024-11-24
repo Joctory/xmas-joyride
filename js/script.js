@@ -15,6 +15,8 @@ const leaderboardForm = document.getElementById("leaderboardForm");
 const pauseModal = document.getElementById("pauseModal");
 const formLoader = document.getElementById("form-loader");
 const submitError = document.getElementById("submit-error");
+const driveXmas = document.getElementById("drive-xmas");
+const driveXmasTitle = document.getElementById("game-menu-main");
 let previousLane = null; // Variable to track the previous lane
 // Options
 const musicButton = document.getElementById("music-setting");
@@ -41,6 +43,12 @@ const HTPdiv = document.getElementById("htp-div");
 const HTPgameArea = document.getElementById("htpgameArea");
 const HTPplayer = document.getElementById("htpplayer");
 const HTPexplosion = document.getElementById("htpexplosion");
+//  Init Game Loading
+// Init Game Var
+var gameInitLoader = document.getElementById("game-init-loader");
+const initLoader = document.querySelector(".init-loader");
+
+let countdownInterval; // Declare this at the top with other variables
 
 // Variable to track coins collected
 let goldCoinsCollected = 0;
@@ -52,7 +60,7 @@ let score = 0;
 let speed = 2;
 let playerX = 140;
 const playerWidth = 54;
-const playerHeight = 71;
+const playerHeight = 68;
 
 const obstacles = [];
 const coins = [];
@@ -72,8 +80,6 @@ const obstacleTypes = ["obstacle-1", "obstacle-2", "obstacle-3", "obstacle-4", "
 
 // Delete
 // const failed = new Audio("sound/failed.mp3");
-// const landsounds1 = new Audio("sound/change1.mp3");
-// const landsounds2 = new Audio("sound/change2.mp3");
 
 // Variable to track the pause state
 let isPaused = false;
@@ -97,6 +103,8 @@ let currentSoundEffect = null;
 
 // Preload the sound effects when the page loads
 function preloadSounds() {
+  sounds.open = new Audio("/sound/open.mp3");
+  sounds.close = new Audio("/sound/close.mp3");
   sounds.coinSound = new Audio("/sound/coin-sound.mp3");
   sounds.explosionSound = new Audio("/sound/explosion-sound.mp3");
   sounds.titleMusic = new Audio("/sound/title.mp3");
@@ -107,7 +115,9 @@ function preloadSounds() {
   sounds.passThroughSound4 = new Audio("/sound/pass-through-sound4.mp3");
   sounds.countdownSound = new Audio("/sound/countdown-sound.mp3");
   sounds.startSound = new Audio("/sound/start-sound.mp3");
-  // sounds.laneChangeSound = new Audio("/sound/lane-change-sound.mp3");
+  sounds.prize = new Audio("/sound/prize.mp3");
+  sounds.scoreCount = new Audio("/sound/score-count.mp3");
+  sounds.laneChangeSound = new Audio("/sound/lane-change-sound.mp3");
 }
 
 // Function to check settings
@@ -182,6 +192,18 @@ function playSoundEffect(soundKey) {
   }
 }
 
+// Function to play sound
+function playButtonClickSound() {
+  sounds.open.currentTime = 0; // Reset sound to start
+  playSoundEffect("open");
+}
+
+// Function to play sound
+function closeButtonClickSound() {
+  sounds.close.currentTime = 0; // Reset sound to start
+  playSoundEffect("close");
+}
+
 // Options
 function toggleMusicSetting() {
   const musicTick = document.getElementById("music-tick");
@@ -246,10 +268,7 @@ function createObstacle() {
   const lane = Math.floor(Math.random() * 3);
   const x = Math.max(
     0,
-    Math.min(
-      gameArea.clientWidth - obstaclesWidth,
-      lane * laneWidth + (laneWidth - obstaclesWidth) / 2
-    )
+    Math.min(gameArea.clientWidth - obstaclesWidth, lane * laneWidth + (laneWidth - obstaclesWidth) / 2)
   );
   obstacle.style.left = `${x}px`;
   obstacle.style.top = "-50px";
@@ -300,22 +319,12 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return (
-      x < obstacleRect.right &&
-      x + 20 > obstacleRect.left &&
-      y < obstacleRect.bottom &&
-      y + 20 > obstacleRect.top
-    );
+    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
   });
 }
 
 function checkCollision(rect1, rect2) {
-  return (
-    rect1.left < rect2.right &&
-    rect1.right > rect2.left &&
-    rect1.top < rect2.bottom &&
-    rect1.bottom > rect2.top
-  );
+  return rect1.left < rect2.right && rect1.right > rect2.left && rect1.top < rect2.bottom && rect1.bottom > rect2.top;
 }
 
 function updateGame() {
@@ -371,10 +380,7 @@ function updateGame() {
         const laneWidth = gameArea.clientWidth / 3; // Calculate lane width based on gameArea width
         const newX = Math.max(
           0,
-          Math.min(
-            gameArea.clientWidth - obstaclesWidth,
-            newLane * laneWidth + (laneWidth - obstaclesWidth) / 2
-          )
+          Math.min(gameArea.clientWidth - obstaclesWidth, newLane * laneWidth + (laneWidth - obstaclesWidth) / 2)
         );
         obstacle.style.left = `${newX}px`;
         obstacle.dataset.lane = newLane; // Update the stored lane
@@ -404,20 +410,21 @@ function updateGame() {
       gameArea.removeChild(coin);
       coins.splice(index, 1);
     }
+    const coinType = coin.className.split("-")[1]; // Get the type of coin from its class
+
     // Update the collision detection part in the updateGame function
     if (checkCollision(player.getBoundingClientRect(), coin.getBoundingClientRect())) {
       gameArea.removeChild(coin);
       coins.splice(index, 1);
       score += parseInt(coin.dataset.value);
       coinElement.textContent = `+ ${coin.dataset.value}`;
-      coinElement.classList.add("show");
+      coinElement.classList.add("show", coinType);
       setTimeout(() => {
-        coinElement.classList.remove("show");
+        coinElement.classList.remove("show", coinType);
       }, 800);
       playSoundEffect("coinSound");
 
       // Update coin collection counts
-      const coinType = coin.className.split("-")[1]; // Get the type of coin from its class
       if (coinType === "gold") {
         goldCoinsCollected++;
       } else if (coinType === "silver") {
@@ -469,10 +476,7 @@ function setPlayerLane(x) {
 
   playerX = Math.max(
     0,
-    Math.min(
-      gameArea.clientWidth - playerWidth,
-      newLane * laneWidth + (laneWidth - playerWidth) / 2
-    )
+    Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2)
   );
   updatePlayerPosition();
 }
@@ -491,20 +495,34 @@ function resetHTP() {
   HTPplayer.style.backgroundImage = "url('/assets/player.png')";
 }
 
+function preStartGame() {
+  gameInitLoader.style.display = "flex";
+  setTimeout(() => {
+    gameInitLoader.style.display = "none";
+    startGame();
+  }, 2500);
+}
+
 function startGame() {
   if (gameStarted) return;
+  stopGame();
   player.style.display = "block";
   HTPdiv.style.display = "none";
   startline.style.display = "block";
-  startline.classList.remove("started");
   player.style.display = "none";
   startMenu.style.display = "none";
   pauseButton.style.display = "none";
+
+  driveXmas.classList.remove("entrance");
+  driveXmasTitle.classList.remove("entrance");
+  startline.classList.remove("started");
+  finalScoreElement.classList.remove("scale");
   player.style.backgroundImage = "url('/assets/player.png')";
   sounds.titleMusic.pause();
   setGameCookie("first", 1);
   drawBackground();
   gameStarted = true;
+  gameStarting = true;
   isPaused = false;
   isGameOver = false;
   score = 0;
@@ -534,7 +552,7 @@ function startGame() {
   player.classList.add("player-init");
 
   let countdown = 3;
-  const countdownInterval = setInterval(() => {
+  countdownInterval = setInterval(() => {
     countdownDiv.textContent = countdown;
     // Play countdown sound effect;
     playSoundEffect("countdownSound");
@@ -544,25 +562,28 @@ function startGame() {
       clearInterval(countdownInterval);
       countdownDiv.textContent = "START";
       setTimeout(() => {
-        countdownDiv.style.display = "none";
-        countdownDiv.textContent = "";
-        if (isMusicOn == 1) {
-          sounds.backgroundMusic.play();
-        }
-        startline.classList.add("started");
-        gameArea.classList.remove("disabled");
-        updateGame();
-        obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
-        coinInterval = setInterval(createCoin, 3000);
-        scoreInterval = setInterval(() => {
-          score++;
-          // Increase obstacle spawn rate every 10 seconds
-          if (score % 20 === 0) {
-            updateObstacleSpawnRate();
+        if (gameStarted) {
+          countdownDiv.style.display = "none";
+          countdownDiv.textContent = "";
+          gameStarting = false;
+          if (isMusicOn == 1) {
+            sounds.backgroundMusic.play();
           }
-        }, 100);
-        pauseButton.style.display = "block";
-        player.classList.remove("player-init");
+          startline.classList.add("started");
+          gameArea.classList.remove("disabled");
+          updateGame();
+          obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
+          coinInterval = setInterval(createCoin, 3000);
+          scoreInterval = setInterval(() => {
+            score++;
+            // Increase obstacle spawn rate every 10 seconds
+            if (score % 20 === 0) {
+              updateObstacleSpawnRate();
+            }
+          }, 100);
+          pauseButton.style.display = "block";
+          player.classList.remove("player-init");
+        }
       }, 1000);
     }
   }, 1000);
@@ -573,12 +594,42 @@ function startGame() {
   bronzeCoinsCollected = 0;
 }
 
+// Function to fully stop the game
+function stopGame() {
+  // Stop the game loop
+  cancelAnimationFrame(animationId);
+
+  // Clear all intervals
+  clearInterval(obstacleInterval);
+  clearInterval(coinInterval);
+  clearInterval(scoreInterval);
+
+  // Pause the background music
+  sounds.backgroundMusic.pause();
+
+  // Reset game state variables
+  gameStarted = false;
+  gameStarting = false;
+  isGameOver = true;
+  isPaused = false;
+
+  // Remove all obstacles and coins from the game area
+  obstacles.forEach((obstacle) => gameArea.removeChild(obstacle));
+  coins.forEach((coin) => gameArea.removeChild(coin));
+  obstacles.length = 0;
+  coins.length = 0;
+
+  // Hide game over elements
+  countdownDiv.textContent = "";
+  gameOverElement.style.display = "none";
+}
+
 function initStart() {
   const visitCheck = getGameCookie("drive-game-first");
   if (visitCheck == 0) {
     startHTP();
   } else {
-    startGame();
+    preStartGame();
   }
 }
 
@@ -589,6 +640,7 @@ function restartGame() {
 
 function gameOver() {
   gameStarted = false;
+  gameStarting = false;
   isGameOver = true;
   cancelAnimationFrame(animationId);
   clearInterval(obstacleInterval);
@@ -602,9 +654,7 @@ function gameOver() {
 
   // Get the current obstacle's lane
   const playerRect = player.getBoundingClientRect();
-  const collidedObstacle = obstacles.find((obstacle) =>
-    checkCollision(playerRect, obstacle.getBoundingClientRect())
-  );
+  const collidedObstacle = obstacles.find((obstacle) => checkCollision(playerRect, obstacle.getBoundingClientRect()));
 
   if (collidedObstacle) {
     const obstacleLane = parseInt(collidedObstacle.dataset.lane);
@@ -624,6 +674,7 @@ function gameOver() {
   // Hide explosion and show game over screen after animation
   setTimeout(() => {
     gameOverElement.style.display = "flex";
+    scoreElement.textContent = `Score: ???`;
     finalScoreElement.textContent = `${score}`;
 
     // Display collected coins
@@ -636,6 +687,24 @@ function gameOver() {
     // Change player background image to player-crash.gif
     player.style.backgroundImage = "url('/assets/player-crash.gif')";
   }, 1500); // Adjust this time based on your explosion GIF duration
+}
+
+function animateScore(finalScore, callback) {
+  let currentScore = 0;
+  const increment = Math.ceil(finalScore / 100); // Adjust the increment value for smoother animation
+  const duration = 1000; // Duration in milliseconds
+  const intervalTime = 50; // Time between increments in milliseconds
+  const totalSteps = duration / intervalTime;
+
+  const scoreInterval = setInterval(() => {
+    currentScore += increment;
+    if (currentScore >= finalScore) {
+      currentScore = finalScore; // Ensure it doesn't exceed the final score
+      clearInterval(scoreInterval); // Stop the interval
+      if (callback) callback(); // Call the callback function if provided
+    }
+    finalScoreElement.textContent = `${currentScore}`; // Update the displayed score
+  }, totalSteps);
 }
 
 function showLeaderboardForm(newScore) {
@@ -699,6 +768,20 @@ function hidePreview(div) {
   overlay.style.display = "none";
 }
 
+function closeForm() {
+  hidePreview(formfinish);
+  playSoundEffect("scoreCount");
+  animateScore(score, () => {
+    finalScoreElement.classList.add("scale");
+    playSoundEffect("prize");
+    confetti({
+      particleCount: 400,
+      spread: 250,
+      origin: { y: 0.4 },
+    });
+  });
+}
+
 function removePopClass() {
   document.querySelectorAll(".pop-container").forEach((container) => {
     // Remove classes from the pop-container itself
@@ -708,12 +791,20 @@ function removePopClass() {
 
 function mainMenu() {
   startMenu.style.display = "flex";
+  driveXmas.classList.add("entrance");
+  driveXmasTitle.classList.add("entrance");
   gameOverElement.style.display = "none";
+  clearInterval(countdownInterval); // Clear the countdown interval if it's running
+  stopGame();
   playMusic();
 }
 
 function backtomainMenu() {
+  stopGame(); // Stop the game before showing the main menu
+  clearInterval(countdownInterval); // Clear the countdown interval if it's running
   startMenu.style.display = "flex";
+  driveXmas.classList.add("entrance");
+  driveXmasTitle.classList.add("entrance");
   gameOverElement.style.display = "none";
   hidePreview(formfinish);
   hidePreview(pauseModal);
@@ -723,12 +814,12 @@ function backtomainMenu() {
 // Function to pause the game
 function pauseMenu() {
   showPreview(pauseModal);
-  togglePause();
+  pauseGame();
 }
 
 function unpauseMenu() {
   hidePreview(pauseModal);
-  togglePause();
+  unpauseGame();
 }
 
 function pauseGame() {
@@ -746,32 +837,27 @@ function pauseGame() {
 // Function to unpause the game
 function unpauseGame() {
   if (isPaused) {
-    isPaused = false; // Set the game state to running
-    gameStarted = true;
-    updateGame(); // Restart the game loop
-    if (isMusicOn == 1) {
-      sounds.backgroundMusic.play(); // Resume background music
-    }
-
-    // Restart intervals
-    obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
-    coinInterval = setInterval(createCoin, 3000);
-    scoreInterval = setInterval(() => {
-      score++;
-      // Increase obstacle spawn rate every 10 seconds
-      if (score % 20 === 0) {
-        updateObstacleSpawnRate();
+    if (gameStarting) {
+      restartGame();
+    } else {
+      isPaused = false; // Set the game state to running
+      gameStarted = true;
+      updateGame(); // Restart the game loop
+      if (isMusicOn == 1) {
+        sounds.backgroundMusic.play(); // Resume background music
       }
-    }, 100);
-  }
-}
 
-// Function to toggle pause/unpause
-function togglePause() {
-  if (isPaused) {
-    unpauseGame(); // Call unpause function if currently paused
-  } else {
-    pauseGame(); // Call pause function if currently running
+      // Restart intervals
+      obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
+      coinInterval = setInterval(createCoin, 3000);
+      scoreInterval = setInterval(() => {
+        score++;
+        // Increase obstacle spawn rate every 10 seconds
+        if (score % 20 === 0) {
+          updateObstacleSpawnRate();
+        }
+      }, 100);
+    }
   }
 }
 
@@ -870,7 +956,7 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "p") {
     // Press 'p' to toggle pause/unpause
-    togglePause();
+    pauseGame();
   }
 });
 
@@ -880,6 +966,60 @@ document.addEventListener("DOMContentLoaded", function () {
   checkOptions();
   updatePlayerPosition();
 });
+
+// Add event listener to all game buttons
+document.querySelectorAll(".game-button").forEach((button) => {
+  button.addEventListener("click", playButtonClickSound);
+});
+
+window.addEventListener("load", function () {
+  setTimeout(() => {
+    gameInitLoader.style.display = "none";
+    driveXmas.classList.add("entrance");
+    driveXmasTitle.classList.add("entrance");
+  }, 3000);
+});
+
+// Check if user change window
+window.addEventListener("blur", () => {
+  if (gameStarted) {
+    pauseMenu();
+  }
+});
+
+// Detect if user not active
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    if (gameStarted) {
+      pauseMenu();
+    }
+  }
+});
+
+// Check if user clicked back button
+(function () {
+  // Function to disable back navigation
+  function disableBackNavigation() {
+    // Push an initial state onto the history stack
+    history.pushState(null, null, location.href);
+
+    // Listen for popstate events
+    window.onpopstate = function (event) {
+      // Push another state to prevent going back
+      history.pushState(null, null, location.href);
+      if (gameStarted) {
+        pauseMenu();
+        history.pushState(null, null, location.href);
+      } else {
+        removePopClass();
+        overlay.style.display = "none";
+      }
+    };
+  }
+
+  // Call the function on page load
+  disableBackNavigation();
+})();
 
 // How to Play JS
 const driver = window.driver.js.driver;
@@ -897,26 +1037,44 @@ const htpdriver = driver({
       popover: {
         title: "Welcome to AXS Drive: Xmas Joyride!",
         description: "Before you start the game, here is some information you need to know",
+        onNextClick: () => {
+          closeButtonClickSound();
+          playSoundEffect("passThroughSound3");
+          htpdriver.moveNext();
+        },
       },
     },
     {
       element: "#htpplayer",
-      popover: { title: "AXS Car", description: "You job is to deliver all the gift in time!" },
+      popover: {
+        title: "AXS Car",
+        description: "You job is to deliver all the gift in time!",
+        onNextClick: () => {
+          closeButtonClickSound();
+          playSoundEffect("passThroughSound1");
+          htpdriver.moveNext();
+        },
+      },
     },
     {
       element: ".htp-obstacle",
       popover: {
         title: "Your Enemy",
         description: "These cars on the road are the one who slow down your delivery",
+        onNextClick: () => {
+          closeButtonClickSound();
+          playSoundEffect("laneChangeSound");
+          htpdriver.moveNext();
+        },
       },
     },
     {
       element: "#htp-car-crash-part",
       popover: {
         title: "Careful!",
-        description:
-          "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
+        description: "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
         onNextClick: () => {
+          closeButtonClickSound();
           document.querySelector(".driver-popover-navigation-btns").style.display = "none";
           HTPplayer.classList.add("played");
           // Show explosion
@@ -940,11 +1098,15 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "OH NO!",
-        description:
-          "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
+        description: "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
         onPrevClick: () => {
           resetHTP();
           htpdriver.movePrevious();
+        },
+        onNextClick: () => {
+          closeButtonClickSound();
+          playSoundEffect("coinSound");
+          htpdriver.moveNext();
         },
       },
     },
@@ -953,6 +1115,11 @@ const htpdriver = driver({
       popover: {
         title: "Bronze Present",
         description: "This is a bronze present which add additional 50 scores",
+        onNextClick: () => {
+          closeButtonClickSound();
+          playSoundEffect("coinSound");
+          htpdriver.moveNext();
+        },
       },
     },
     {
@@ -960,6 +1127,11 @@ const htpdriver = driver({
       popover: {
         title: "Silver Present",
         description: "This is a silver present which add additional 100 scores",
+        onNextClick: () => {
+          closeButtonClickSound();
+          playSoundEffect("coinSound");
+          htpdriver.moveNext();
+        },
       },
     },
     {
@@ -967,6 +1139,11 @@ const htpdriver = driver({
       popover: {
         title: "Gold Present",
         description: "This is a gold present which add additional 150 scores",
+        onNextClick: () => {
+          closeButtonClickSound();
+          playSoundEffect("scoreCount");
+          htpdriver.moveNext();
+        },
       },
     },
     {
@@ -974,6 +1151,11 @@ const htpdriver = driver({
       popover: {
         title: "Score",
         description: "This is your scores, get the highest scores as you can!",
+        onNextClick: () => {
+          closeButtonClickSound();
+          playSoundEffect("prize");
+          htpdriver.moveNext();
+        },
       },
     },
     {
@@ -983,7 +1165,7 @@ const htpdriver = driver({
         onNextClick: () => {
           htpdriver.destroy();
           resetHTP();
-          startGame();
+          preStartGame();
         },
       },
     },
