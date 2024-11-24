@@ -1,5 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
+/* For Wordpress Elementor */
+.elementor,
+.elementor > * {
+  height: 100%;
+}
+
+body {
+  touch-action: pan-y pan-x;
+}
+
+button:active,
+button:hover {
+  background-color: #fff0;
+  text-decoration: none;
+}
+
 * {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -86,7 +102,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  background-image: url(/assets/road.png);
+  background-image: url("/assets/road.png");
   background-size: cover;
   z-index: 5;
 }
@@ -694,11 +710,6 @@ button {
   -webkit-box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
   -moz-box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
   box-shadow: inset 4px -4px 0px 0px #0458a2, inset -4px 4px 0px 0px #34ebff;
-  /* background-image: url("https://cdn.jsdelivr.net/gh/Joctory/Game-O-Matic-Game@latest/assets/menu/box-orange.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: bottom;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 
 .pop-container-inner {
@@ -728,7 +739,7 @@ button {
   height: 100%;
   position: absolute;
   bottom: -20px;
-  background-image: url(/assets/header-border.png);
+  background-image: url("/assets/header-border.png");
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: 100%;
