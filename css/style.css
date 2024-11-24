@@ -3,6 +3,7 @@
 /* For Wordpress Elementor */
 .elementor,
 .elementor > * {
+  width: 100%;
   height: 100%;
 }
 
