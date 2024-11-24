@@ -390,6 +390,16 @@ body {
   background-position: bottom;
 }
 
+.snowScreen {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: -2vh;
+  left: 0;
+  z-index: 1;
+  transform: scale(3.5);
+}
+
 .title-car-main {
   position: absolute;
   bottom: 0;
@@ -510,6 +520,7 @@ button {
   align-items: center;
   margin-top: 2%;
   width: 50%;
+  z-index: 2;
 }
 
 .axs-title {
