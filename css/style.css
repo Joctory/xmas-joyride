@@ -609,6 +609,9 @@ button {
 }
 
 #finalScore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 4.5rem;
   text-align: center;
   font-size: 2.5rem;
