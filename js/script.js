@@ -950,8 +950,8 @@ function getGameCookie(cname) {
 
 // Leaderboard Modal
 leaderboardButton.addEventListener("click", function () {
-  const userEmail = getGameCookie("drive-game-name");
-  winneriframe.src = "/christmas-joyride-leaderboard?gamemail=" + userEmail;
+  const userEmail = getGameCookie("drive-game-email");
+  winneriframe.src = "/christmas-joyride-leaderboard.html?gamemail=" + userEmail;
   winneriframe.setAttribute("scrolling", "no");
   winneriframe.style.overflow = "hidden";
 });
