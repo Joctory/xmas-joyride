@@ -192,7 +192,7 @@ body {
 .driver-popover-title,
 .driver-popover-description {
   text-align: center;
-  font-family: "Press Start 2P", system-ui;
+  font-family: "Press Start 2P", system-ui !important;
   font-weight: 400;
   font-style: normal;
 }
@@ -609,6 +609,7 @@ button {
 }
 
 #finalScore {
+  height: 4.5rem;
   text-align: center;
   font-size: 2.5rem;
   padding: 10px 20px;
@@ -886,7 +887,7 @@ button {
   height: 40px;
   margin-bottom: 10px;
   padding: 5px;
-  font-family: "Press Start 2P", system-ui;
+  font-family: "Press Start 2P", system-ui !important;
   font-weight: 400;
   font-style: normal;
 }
