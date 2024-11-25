@@ -837,6 +837,8 @@ function hidePreview(div) {
 }
 
 function closeForm() {
+  const gameovermenu = document.querySelector(".gameOver-menu");
+  gameovermenu.style.visibility = "hidden";
   hidePreview(formfinish);
   playSoundEffect("scoreCount");
   animateScore(score, () => {
@@ -847,6 +849,7 @@ function closeForm() {
       spread: 250,
       origin: { y: 0.4 },
     });
+    gameovermenu.style.visibility = "visible";
   });
 }
 

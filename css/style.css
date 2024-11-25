@@ -756,6 +756,7 @@ button {
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: 100%;
+  z-index: 1;
 }
 
 .pop-container-info {
