@@ -90,7 +90,7 @@ let backgroundPositionY = 0;
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const backgroundImage = new Image();
-backgroundImage.src = "https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/road.png"; // Your background image
+backgroundImage.src = "assets/road.png"; // Your background image
 
 let yOffset = 0;
 
@@ -269,7 +269,10 @@ function createObstacle() {
   const lane = Math.floor(Math.random() * 3);
   const x = Math.max(
     0,
-    Math.min(gameArea.clientWidth - obstaclesWidth, lane * laneWidth + (laneWidth - obstaclesWidth) / 2)
+    Math.min(
+      gameArea.clientWidth - obstaclesWidth,
+      lane * laneWidth + (laneWidth - obstaclesWidth) / 2
+    )
   );
   obstacle.style.left = `${x}px`;
   obstacle.style.top = "-50px";
@@ -320,12 +323,22 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
+    return (
+      x < obstacleRect.right &&
+      x + 20 > obstacleRect.left &&
+      y < obstacleRect.bottom &&
+      y + 20 > obstacleRect.top
+    );
   });
 }
 
 function checkCollision(rect1, rect2) {
-  return rect1.left < rect2.right && rect1.right > rect2.left && rect1.top < rect2.bottom && rect1.bottom > rect2.top;
+  return (
+    rect1.left < rect2.right &&
+    rect1.right > rect2.left &&
+    rect1.top < rect2.bottom &&
+    rect1.bottom > rect2.top
+  );
 }
 
 function updateGame() {
@@ -381,7 +394,10 @@ function updateGame() {
         const laneWidth = gameArea.clientWidth / 3; // Calculate lane width based on gameArea width
         const newX = Math.max(
           0,
-          Math.min(gameArea.clientWidth - obstaclesWidth, newLane * laneWidth + (laneWidth - obstaclesWidth) / 2)
+          Math.min(
+            gameArea.clientWidth - obstaclesWidth,
+            newLane * laneWidth + (laneWidth - obstaclesWidth) / 2
+          )
         );
         obstacle.style.left = `${newX}px`;
         obstacle.dataset.lane = newLane; // Update the stored lane
@@ -477,7 +493,10 @@ function setPlayerLane(x) {
 
   playerX = Math.max(
     0,
-    Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2)
+    Math.min(
+      gameArea.clientWidth - playerWidth,
+      newLane * laneWidth + (laneWidth - playerWidth) / 2
+    )
   );
   updatePlayerPosition();
 }
@@ -493,7 +512,7 @@ function startHTP() {
 
 function resetHTP() {
   HTPplayer.classList.remove("played");
-  HTPplayer.style.backgroundImage = "url('https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/player.png')";
+  HTPplayer.style.backgroundImage = "url('assets/player.png')";
 }
 
 function preStartGame() {
@@ -518,7 +537,7 @@ function startGame() {
   driveXmasTitle.classList.remove("entrance");
   startline.classList.remove("started");
   finalScoreElement.classList.remove("scale");
-  player.style.backgroundImage = "url('https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/player.png')";
+  player.style.backgroundImage = "url('assets/player.png')";
   sounds.titleMusic.pause();
   setGameCookie("first", 1);
   drawBackground();
@@ -655,7 +674,9 @@ function gameOver() {
 
   // Get the current obstacle's lane
   const playerRect = player.getBoundingClientRect();
-  const collidedObstacle = obstacles.find((obstacle) => checkCollision(playerRect, obstacle.getBoundingClientRect()));
+  const collidedObstacle = obstacles.find((obstacle) =>
+    checkCollision(playerRect, obstacle.getBoundingClientRect())
+  );
 
   if (collidedObstacle) {
     const obstacleLane = parseInt(collidedObstacle.dataset.lane);
@@ -686,8 +707,7 @@ function gameOver() {
     showLeaderboardForm(score);
     explosion.style.display = "none";
     // Change player background image to player-crash.gif
-    player.style.backgroundImage =
-      "url('https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/player-crash.gif')";
+    player.style.backgroundImage = "url('assets/player-crash.gif')";
   }, 1500); // Adjust this time based on your explosion GIF duration
 }
 
@@ -1074,7 +1094,8 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "Careful!",
-        description: "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
+        description:
+          "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
         onNextClick: () => {
           closeButtonClickSound();
           document.querySelector(".driver-popover-navigation-btns").style.display = "none";
@@ -1088,8 +1109,7 @@ const htpdriver = driver({
             setTimeout(() => {
               HTPexplosion.style.display = "none";
               // Change player background image to player-crash.gif
-              HTPplayer.style.backgroundImage =
-                "url('https://joasisweb.com/wp-content/uploads/xmas-joyride/assets/player-crash.gif')";
+              HTPplayer.style.backgroundImage = "url('assets/player-crash.gif')";
               document.querySelector(".driver-popover-navigation-btns").style.display = "flex";
             }, 1800);
           }, 500);
@@ -1101,7 +1121,8 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "OH NO!",
-        description: "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
+        description:
+          "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
         onPrevClick: () => {
           resetHTP();
           htpdriver.movePrevious();
