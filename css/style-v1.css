@@ -103,7 +103,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/road.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/road.png");
   background-size: cover;
   z-index: 5;
 }
@@ -243,7 +243,7 @@ body {
   left: 0;
   width: 100%;
   height: auto;
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/road.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/road.png");
   background-size: cover;
 }
 
@@ -284,7 +284,7 @@ body {
 #htpplayer {
   width: 54px;
   height: 68px;
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/player.png"); /* Replace with your player image */
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png"); /* Replace with your player image */
   background-size: cover;
   bottom: 50px;
 }
@@ -309,23 +309,23 @@ body {
 }
 
 .obstacle-1 {
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/obstacle1.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/obstacle1.png");
 }
 
 .obstacle-2 {
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/obstacle2.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/obstacle2.png");
 }
 
 .obstacle-3 {
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/obstacle3.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/obstacle3.png");
 }
 
 .obstacle-4 {
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/obstacle4.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/obstacle4.png");
 }
 
 .obstacle-5 {
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/obstacle5.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/obstacle5.png");
 }
 
 .coin {
@@ -338,15 +338,15 @@ body {
 }
 
 .coin-gold {
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/coin-gold.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/coin-gold.png");
 }
 
 .coin-silver {
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/coin-silver.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/coin-silver.png");
 }
 
 .coin-bronze {
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/coin-bronze.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/coin-bronze.png");
 }
 
 #gameOver {
@@ -401,7 +401,7 @@ body {
   font-size: 24px;
   z-index: 10;
 
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/title-bg.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/title-bg.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: bottom;
@@ -512,7 +512,7 @@ button {
 .checkbox-main {
   width: 30px;
   height: 30px;
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/checkbox.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/checkbox.png");
   background-position: center;
   background-size: 100%;
 }
@@ -746,7 +746,7 @@ button {
   height: 100%;
   position: absolute;
   bottom: -20px;
-  background-image: url("https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/header-border.png");
+  background-image: url("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/header-border.png");
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: 100%;

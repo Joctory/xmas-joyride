@@ -90,7 +90,7 @@ let backgroundPositionY = 0;
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const backgroundImage = new Image();
-backgroundImage.src = "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/road.png"; // Your background image
+backgroundImage.src = "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/road.png"; // Your background image
 
 let yOffset = 0;
 
@@ -105,49 +105,49 @@ let currentSoundEffect = null;
 // Preload the sound effects when the page loads
 function preloadSounds() {
   sounds.open = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/open.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/open.mp3"
   );
   sounds.close = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/close.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/close.mp3"
   );
   sounds.coinSound = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/coin-sound.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/coin-sound.mp3"
   );
   sounds.explosionSound = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/explosion-sound.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/explosion-sound.mp3"
   );
   sounds.titleMusic = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/title.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/title.mp3"
   );
   sounds.backgroundMusic = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/ingame.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/ingame.mp3"
   );
   sounds.passThroughSound1 = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/pass-through-sound1.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound1.mp3"
   );
   sounds.passThroughSound2 = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/pass-through-sound2.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound2.mp3"
   );
   sounds.passThroughSound3 = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/pass-through-sound3.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound3.mp3"
   );
   sounds.passThroughSound4 = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/pass-through-sound4.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound4.mp3"
   );
   sounds.countdownSound = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/countdown-sound.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/countdown-sound.mp3"
   );
   sounds.startSound = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/start-sound.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/start-sound.mp3"
   );
   sounds.prize = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/prize.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/prize.mp3"
   );
   sounds.scoreCount = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/score-count.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/score-count.mp3"
   );
   sounds.laneChangeSound = new Audio(
-    "https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/sound/lane-change-sound.mp3"
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/lane-change-sound.mp3"
   );
 }
 
@@ -543,7 +543,7 @@ function startHTP() {
 function resetHTP() {
   HTPplayer.classList.remove("played");
   HTPplayer.style.backgroundImage =
-    "url('https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/player.png')";
+    "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
 }
 
 function preStartGame() {
@@ -569,7 +569,7 @@ function startGame() {
   startline.classList.remove("started");
   finalScoreElement.classList.remove("scale");
   player.style.backgroundImage =
-    "url('https://cdn.statically.io/gh/Joctory/xmas-joyride/main/v1/assets/player.png')";
+    "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
   sounds.titleMusic.pause();
   setGameCookie("first", 1);
   drawBackground();
