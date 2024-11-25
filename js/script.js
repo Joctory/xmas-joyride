@@ -1,6 +1,7 @@
 /* Developed by Joel Lee @ Joasis Web */
 const gameArea = document.getElementById("gameArea");
 const countdownDiv = document.getElementById("countdown");
+const tipsDiv = document.getElementById("tips");
 const player = document.getElementById("player");
 const startline = document.getElementById("startline");
 const scoreElement = document.getElementById("score");
@@ -104,24 +105,14 @@ let currentSoundEffect = null;
 
 // Preload the sound effects when the page loads
 function preloadSounds() {
-  sounds.open = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/open.mp3"
-  );
-  sounds.close = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/close.mp3"
-  );
-  sounds.coinSound = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/coin-sound.mp3"
-  );
+  sounds.open = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/open.mp3");
+  sounds.close = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/close.mp3");
+  sounds.coinSound = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/coin-sound.mp3");
   sounds.explosionSound = new Audio(
     "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/explosion-sound.mp3"
   );
-  sounds.titleMusic = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/title.mp3"
-  );
-  sounds.backgroundMusic = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/ingame.mp3"
-  );
+  sounds.titleMusic = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/title.mp3");
+  sounds.backgroundMusic = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/ingame.mp3");
   sounds.passThroughSound1 = new Audio(
     "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound1.mp3"
   );
@@ -137,15 +128,9 @@ function preloadSounds() {
   sounds.countdownSound = new Audio(
     "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/countdown-sound.mp3"
   );
-  sounds.startSound = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/start-sound.mp3"
-  );
-  sounds.prize = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/prize.mp3"
-  );
-  sounds.scoreCount = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/score-count.mp3"
-  );
+  sounds.startSound = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/start-sound.mp3");
+  sounds.prize = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/prize.mp3");
+  sounds.scoreCount = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/score-count.mp3");
   sounds.laneChangeSound = new Audio(
     "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/lane-change-sound.mp3"
   );
@@ -193,11 +178,6 @@ function checkOptions(option) {
 
   if (areSoundEffectsOn == 0) {
     effectTick.style.display = "none";
-  }
-
-  // Play music if enabled
-  if (isMusicOn == 1) {
-    playMusic(); // Play music if the music setting is enabled
   }
 }
 
@@ -258,7 +238,7 @@ function toggleMusicSetting() {
 }
 
 // Function to play music
-function playMusic() {
+function playMusic(div) {
   if (isMusicOn == 1) {
     sounds.titleMusic.loop = true; // Optional: Loop the music
     sounds.titleMusic.currentTime = 0;
@@ -305,10 +285,7 @@ function createObstacle() {
   const lane = Math.floor(Math.random() * 3);
   const x = Math.max(
     0,
-    Math.min(
-      gameArea.clientWidth - obstaclesWidth,
-      lane * laneWidth + (laneWidth - obstaclesWidth) / 2
-    )
+    Math.min(gameArea.clientWidth - obstaclesWidth, lane * laneWidth + (laneWidth - obstaclesWidth) / 2)
   );
   obstacle.style.left = `${x}px`;
   obstacle.style.top = "-150px";
@@ -359,22 +336,12 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return (
-      x < obstacleRect.right &&
-      x + 20 > obstacleRect.left &&
-      y < obstacleRect.bottom &&
-      y + 20 > obstacleRect.top
-    );
+    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
   });
 }
 
 function checkCollision(rect1, rect2) {
-  return (
-    rect1.left < rect2.right &&
-    rect1.right > rect2.left &&
-    rect1.top < rect2.bottom &&
-    rect1.bottom > rect2.top
-  );
+  return rect1.left < rect2.right && rect1.right > rect2.left && rect1.top < rect2.bottom && rect1.bottom > rect2.top;
 }
 
 function updateGame() {
@@ -430,10 +397,7 @@ function updateGame() {
         const laneWidth = gameArea.clientWidth / 3; // Calculate lane width based on gameArea width
         const newX = Math.max(
           0,
-          Math.min(
-            gameArea.clientWidth - obstaclesWidth,
-            newLane * laneWidth + (laneWidth - obstaclesWidth) / 2
-          )
+          Math.min(gameArea.clientWidth - obstaclesWidth, newLane * laneWidth + (laneWidth - obstaclesWidth) / 2)
         );
         obstacle.style.left = `${newX}px`;
         obstacle.dataset.lane = newLane; // Update the stored lane
@@ -529,10 +493,7 @@ function setPlayerLane(x) {
 
   playerX = Math.max(
     0,
-    Math.min(
-      gameArea.clientWidth - playerWidth,
-      newLane * laneWidth + (laneWidth - playerWidth) / 2
-    )
+    Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2)
   );
   updatePlayerPosition();
 }
@@ -550,8 +511,7 @@ function startHTP() {
 
 function resetHTP() {
   HTPplayer.classList.remove("played");
-  HTPplayer.style.backgroundImage =
-    "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
+  HTPplayer.style.backgroundImage = "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
 }
 
 function preStartGame() {
@@ -576,8 +536,7 @@ function startGame() {
   driveXmasTitle.classList.remove("entrance");
   startline.classList.remove("started");
   finalScoreElement.classList.remove("scale");
-  player.style.backgroundImage =
-    "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
+  player.style.backgroundImage = "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
   sounds.titleMusic.pause();
   setGameCookie("first", 1);
   drawBackground();
@@ -605,14 +564,14 @@ function startGame() {
     playerEmailInput.value = userEmail;
   }
 
-  // Add countdown before starting the game
-  countdownDiv.style.display = "block";
-
   setPlayerLane(gameArea.clientWidth / 2); // Set to middle lane using setPlayerLane
   player.classList.add("player-init");
 
   let countdown = 3;
   countdownInterval = setInterval(() => {
+    // Add countdown before starting the game
+    countdownDiv.style.display = "block";
+    tipsDiv.style.display = "block";
     countdownDiv.textContent = countdown;
     // Play countdown sound effect;
     playSoundEffect("countdownSound");
@@ -624,9 +583,12 @@ function startGame() {
       setTimeout(() => {
         if (gameStarted) {
           countdownDiv.style.display = "none";
+          tipsDiv.style.display = "none";
           countdownDiv.textContent = "";
           gameStarting = false;
           if (isMusicOn == 1) {
+            sounds.backgroundMusic.loop = true; // Optional: Loop the music
+            sounds.backgroundMusic.currentTime = 0;
             sounds.backgroundMusic.play();
           }
           startline.classList.add("started");
@@ -688,6 +650,11 @@ function initStart() {
   const visitCheck = getGameCookie("drive-game-first");
   let cookiesCheck = getGameCookie("drive-game-cookies");
 
+  // Play music if enabled
+  if (isMusicOn == 1) {
+    playMusic(); // Play music if the music setting is enabled
+  }
+
   if (cookiesCheck == 0) {
     showPreview(howtoplayModal);
   } else {
@@ -720,9 +687,7 @@ function gameOver() {
 
   // Get the current obstacle's lane
   const playerRect = player.getBoundingClientRect();
-  const collidedObstacle = obstacles.find((obstacle) =>
-    checkCollision(playerRect, obstacle.getBoundingClientRect())
-  );
+  const collidedObstacle = obstacles.find((obstacle) => checkCollision(playerRect, obstacle.getBoundingClientRect()));
 
   if (collidedObstacle) {
     const obstacleLane = parseInt(collidedObstacle.dataset.lane);
@@ -963,10 +928,6 @@ leaderboardButton.addEventListener("click", function () {
   winneriframe.style.overflow = "hidden";
 });
 
-// How to play Modal
-
-// Credit Modal
-
 // game-btn to handle the click and touch events
 document.querySelectorAll(".game-button").forEach((button) => {
   const toggleActiveClass = () => {
@@ -1124,7 +1085,7 @@ const htpdriver = driver({
       element: "#htpplayer",
       popover: {
         title: "AXS Car",
-        description: "You job is to deliver all the gift in time!",
+        description: "You need to deliver alot of presents,tap the lane or drag the car to change the lane",
         onNextClick: () => {
           closeButtonClickSound();
           playSoundEffect("passThroughSound1");
@@ -1148,8 +1109,7 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "Careful!",
-        description:
-          "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
+        description: "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
         onNextClick: () => {
           closeButtonClickSound();
           document.querySelector(".driver-popover-navigation-btns").style.display = "none";
@@ -1163,7 +1123,8 @@ const htpdriver = driver({
             setTimeout(() => {
               HTPexplosion.style.display = "none";
               // Change player background image to player-crash.gif
-              HTPplayer.style.backgroundImage = "url('assets/player-crash.gif')";
+              HTPplayer.style.backgroundImage =
+                "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player-crash.gif')";
               document.querySelector(".driver-popover-navigation-btns").style.display = "flex";
             }, 1800);
           }, 500);
@@ -1175,8 +1136,7 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "OH NO!",
-        description:
-          "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
+        description: "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
         onPrevClick: () => {
           resetHTP();
           htpdriver.movePrevious();
