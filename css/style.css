@@ -816,6 +816,61 @@ button {
   pointer-events: none;
   overflow: hidden;
   touch-action: none;
+  position: relative;
+}
+
+#leaderboard .leaderboard-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #a08000;
+  z-index: 10;
+}
+
+.leaderboard-loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  position: relative;
+  animation: rotate 1s linear infinite;
+}
+.leaderboard-loader::before {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  animation: prixClipFix 2s linear infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes prixClipFix {
+  0% {
+    clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
+  }
+  25% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
+  }
+  50% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%);
+  }
+  75% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
+  }
 }
 
 #winner-iframe {
@@ -823,41 +878,6 @@ button {
   overflow: hidden;
   touch-action: none;
   -webkit-overflow-scrolling: unset;
-}
-
-#leaderboard .row {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 40px;
-  border-bottom: 1px solid #afafaf;
-}
-
-#leaderboard .name {
-  position: relative;
-  display: inline-block;
-  width: 75%;
-  line-height: 45px;
-}
-
-#leaderboard .score {
-  position: relative;
-  display: inline-block;
-  width: 25%;
-}
-
-#leaderboard .row:nth-child(1) {
-  background: gold;
-}
-
-#leaderboard .row:nth-child(2) {
-  background: #c0c0c0;
-}
-
-#leaderboard .row:nth-child(3) {
-  background: #cd7f32;
 }
 
 .form-finish {
