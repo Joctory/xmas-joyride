@@ -311,7 +311,7 @@ function createObstacle() {
     )
   );
   obstacle.style.left = `${x}px`;
-  obstacle.style.top = "-50px";
+  obstacle.style.top = "-150px";
   obstacle.dataset.lane = lane;
   obstacle.dataset.previousLane = lane; // Store the initial lane
   gameArea.appendChild(obstacle);
