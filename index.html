@@ -5,7 +5,7 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>AXS Drive: Christmas Joyride</title>
+    <title>Christmas Joyride</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
   </head>
@@ -161,14 +161,8 @@
         <img src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/pause-btn.png" />
       </div>
       <div id="gameArea" class="disabled">
-        <dotlottie-player
-          src="https://lottie.host/27ed4531-0c80-41a0-9c8f-fc1e42bee100/Z50wk6s0DK.lottie"
-          background="transparent"
-          speed="1"
-          loop
-          autoplay
-          class="snowScreen"></dotlottie-player>
         <div id="countdown"></div>
+        <p id="tips">Tap the lane or drag the car to control</p>
         <div id="startline">
           <img
             src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/startline.png"
@@ -189,7 +183,7 @@
             <div class="coin coin-silver htp-coin-silver"></div>
             <div class="coin coin-bronze htp-coin-bronze"></div>
             <div id="htp-car-crash-part">
-              <div class="obstacle obstacle-2 htp-obstacle" onclick="mainMenu()"></div>
+              <div class="obstacle obstacle-2 htp-obstacle"></div>
               <div id="htp-car-crash">
                 <div id="htpplayer"></div>
                 <img
