@@ -1,84 +1,76 @@
 <?php
-add_action('wp_ajax_get_winner', 'get_winner_function');
-add_action('wp_ajax_nopriv_get_winner', 'get_winner_function');
-function get_winner_function()
+add_action('wp_ajax_store_winner', 'post_game_winner');
+add_action('wp_ajax_nopriv_store_winner', 'post_game_winner');
+
+function post_game_winner()
 {
-    $data = $_POST['data'];
-    $gamemail = $data["user_email"];
+	$data = $_POST['data'];
+	$status = "";
 
-    // Get the current date
-    $current_date = new DateTime();
+	// Check if the form has been submitted
+	if (isset($data['submit_winner'])) {
+		$winner_name = sanitize_text_field($data['winner_name']);
+		$winner_email = sanitize_email($data['winner_email']);
+		$winner_score = intval($data['winner_score']); // Get the score from the hidden field
 
-    // Get the start of the week (Monday)
-    $start_of_week = clone $current_date;
-    $start_of_week->modify('monday this week');
+		// Ensure fields are not empty and score is valid
+		if (!empty($winner_name) && is_email($winner_email) && $winner_score > 0) {
 
-    // Get the end of the week (Sunday)
-    $end_of_week = clone $current_date;
-    $end_of_week->modify('sunday this week');
+			// Query to check if a post with this winner email already exists
+			$existing_winner = new WP_Query(array(
+				'post_type' => 'winner',
+				'meta_query' => array(
+					array(
+						'key' => 'winner_email',
+						'value' => $winner_email,
+						'compare' => '='
+					)
+				)
+			));
 
-    // Prepare the arguments for the query
-    $args = array(
-        'post_type' => 'winner',
-        'posts_per_page' => 5, // Limit to 10 posts
-        'orderby' => 'meta_value_num', // Order by numeric meta value
-        'order' => 'DESC', // Descending order
-        'meta_key' => 'winner_score', // Specify the meta key to order by
-        'post_status' => 'publish', // Only get published posts
-        'meta_query' => array(
-            array(
-                'key' => 'winner_score',
-                'type' => 'NUMERIC' // Ensure winner_score is treated as a number
-            )
-        ),
-        'date_query' => array(
-            array(
-                'after' => $start_of_week->format('Y-m-d'), // Start of the week
-                'before' => $end_of_week->format('Y-m-d'), // End of the week
-                'inclusive' => true, // Include the start and end dates
-            ),
-        ),
-    );
-    $winners = get_posts($args);
+			if ($existing_winner->have_posts()) {
+				// Update existing winner's score
+				$existing_winner->the_post();
+				$post_id = get_the_ID();
 
+				// Get the current score and update it
+				$current_score = get_field('winner_score', $post_id);
+				$new_score = $winner_score; // Add the new score to the current score
+				//If new score is higher than current score
+				if ($new_score > $current_score) {
+					// Update the fields
+					update_field('winner_name', $winner_name, $post_id); // Update name if needed
+					update_field('winner_score', $new_score, $post_id);  // Update score
+				}
 
-    // Initialize an array to hold winner data
-    $output = " "; // Change from string to array
+				$status = "success";
+			} else {
+				// Create a new post for this winner
+				$new_post = array(
+					'post_title'    => $winner_name, // Set the post title as the winner's name
+					'post_status'   => 'publish',    // Publish the post immediately
+					'post_type'     => 'winner',     // Custom post type 'winner'
+					'post_content'  => '',           // You can add more details here if needed
+				);
 
-    // Loop through each winner post and retrieve ACF fields
-    foreach ($winners as $index => $winner) { // Add index to the loop
-        $winner_data = get_fields($winner->ID); // Get all ACF fields for the winner
-        // Determine the position
-        $position = $index + 1;
-        if ($position === 1) {
-            $prposition = "gold";
-            $badge = '<img src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/rank1.png" class="rank" />';
-        } elseif ($position === 2) {
-            $prposition = "silver";
-            $badge = '<img src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/rank2.png" class="rank" />';
-        } elseif ($position === 3) {
-            $prposition = "bronze";
-            $badge = '<img src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/rank3.png" class="rank" />';
-        } else {
-            $prposition = ""; // No badge for positions beyond 3
-            $badge = ""; // No badge for positions beyond 3
-        }
+				// Insert the new post into the database
+				$post_id = wp_insert_post($new_post);
 
-        // Process the $winner_data as needed
-        $output .= '<div class="row ' . esc_html($prposition) . '">';
-        $output .= '<div class="badge">' . esc_html($position) . '.</div>';
-        $output .= '<div class="name">' . $badge . esc_html($winner_data['winner_name']) . '</div>';
-        $output .= '<div class="score">' . esc_html($winner_data['winner_score']) . '</div>';
-        $output .= '</div>';
+				// If the post was successfully created, save the custom fields
+				if ($post_id) {
+					update_field('winner_name', $winner_name, $post_id);
+					update_field('winner_email', $winner_email, $post_id);
+					update_field('winner_score', $winner_score, $post_id);
 
-        if (($gamemail != "unset" || $gamemail != null) && $gamemail === $winner_data['winner_email']) {
-            $output .= '<div class="row player-row">';
-            $output .= '<div class="badge">' . esc_html($position) . '.</div>';
-            $output .= '<div class="name">' . $badge . 'You</div>';
-            $output .= '<div class="score">' . esc_html($winner_data['winner_score']) . '</div>';
-            $output .= '</div>';
-        }
-    }
+					$status = "success";
+				} else {
+					$status = "fail";
+				}
+			}
 
-    wp_send_json_success($output);
+			// Reset post data (important after WP_Query)
+			wp_reset_postdata();
+			wp_send_json_success($status);
+		}
+	}
 }
