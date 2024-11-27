@@ -189,6 +189,11 @@ body {
   touch-action: none !important;
 }
 
+.driver-popover {
+  overflow: hidden;
+  touch-action: none !important;
+}
+
 .driver-popover-arrow-side-top.driver-popover-arrow-align-end {
   display: none;
 }
@@ -478,15 +483,18 @@ button {
 
 #countdown {
   display: none;
+  height: 4rem;
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 48px;
   color: white;
   background-color: #00000090;
   padding: 10px;
-  z-index: 1;
+  z-index: 4;
 }
 
 #tips {
@@ -576,12 +584,13 @@ button {
 
 .speed-title {
   width: 100%;
-  max-width: 250px;
-  opacity: 0;
+  max-width: 250px !important;
+  opacity: 0 !important;
 }
 
 .speed-title.entrance {
-  animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards, swing 10s linear 3.7s infinite;
+  animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards,
+    swing 10s linear 3.7s infinite;
 }
 
 #startButton {
@@ -843,6 +852,77 @@ button {
   position: relative;
 }
 
+#leaderboard .leaderboard-inner {
+  width: 100%;
+  height: 100%;
+  background: #debd37;
+}
+
+#leaderboard .row {
+  font-family: "Press Start 2P", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 16.67%;
+  border-bottom: 1px solid #afafaf;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#leaderboard .name {
+  position: relative;
+  display: inline-block;
+  width: 75%;
+  line-height: 45px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 1rem;
+}
+
+#leaderboard .badge {
+  width: 15%;
+  text-align: left;
+  font-size: 1rem;
+}
+
+#leaderboard .score {
+  position: relative;
+  display: inline-block;
+  width: 25%;
+  text-align: right;
+  font-size: 1rem;
+}
+
+#leaderboard .row.gold {
+  background: gold;
+}
+
+#leaderboard .row.silver {
+  background: #c0c0c0;
+}
+
+#leaderboard .row.bronze {
+  background: #cd7f32;
+}
+
+#leaderboard .player-row {
+  position: absolute;
+  bottom: 0;
+  border-top: 1px solid #afafaf;
+  border-bottom: 1px solid #afafaf;
+  background-color: #35baf3;
+}
+
+#leaderboard .rank {
+  width: 30px;
+  margin-right: 5px;
+}
+
 #leaderboard .leaderboard-overlay {
   display: flex;
   justify-content: center;
@@ -934,6 +1014,7 @@ button {
   font-family: "Press Start 2P", system-ui !important;
   font-weight: 400;
   font-style: normal;
+  transition: none;
 }
 
 .form-loader {
@@ -973,6 +1054,8 @@ button {
 /* How to play Modal */
 #howtoplayModal .cookies-p {
   text-align: center;
+  font-size: 0.9rem;
+  margin-block-end: 0;
 }
 
 #howtoplay {
