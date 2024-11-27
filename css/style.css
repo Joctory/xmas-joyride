@@ -560,6 +560,45 @@ button {
   padding-top: 15px;
   height: 400px;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.tnc-inner p,
+.tnc-inner li {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.tnc-inner table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-top: 10px;
+}
+
+.tnc-inner table td {
+  border-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+  padding: 10px 5px;
+  word-break: normal;
+}
+
+.tnc-inner table th {
+  border-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  overflow: hidden;
+  padding: 10px 5px;
+  word-break: normal;
 }
 
 .tnc-inner p {
