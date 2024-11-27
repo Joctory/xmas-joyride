@@ -956,12 +956,46 @@ function getGameCookie(cname) {
 }
 
 // Leaderboard Modal
+function getMondayOfCurrentWeek() {
+  const today = new Date(); // Get today's date
+  const day = today.getDay(); // Get the current day (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  const diff = today.getDate() - day + (day === 0 ? -6 : 1); // Calculate the difference to get Monday
+  const monday = new Date(today.setDate(diff)); // Set the date to Monday
+
+  // Format the date as YYYY-MM-DD
+  const year = monday.getFullYear();
+  const month = String(monday.getMonth() + 1).padStart(2, "0"); // Months are zero-based, so add 1
+  const dayOfMonth = String(monday.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${dayOfMonth}`; // Return formatted date
+}
+
+function getSundayOfCurrentWeek() {
+  const today = new Date(); // Get today's date
+  const day = today.getDay(); // Get the current day (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  const diff = today.getDate() + (day === 0 ? 0 : 7 - day); // Calculate the difference to get Sunday
+  const sunday = new Date(today.setDate(diff)); // Set the date to Sunday
+
+  // Format the date as YYYY-MM-DD
+  const year = sunday.getFullYear();
+  const month = String(sunday.getMonth() + 1).padStart(2, "0"); // Months are zero-based, so add 1
+  const dayOfMonth = String(sunday.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${dayOfMonth}`; // Return formatted date
+}
+
 leaderboardButton.addEventListener("click", function () {
   const loaderoverlay = document.getElementById("leaderboard-overlay");
   const leaderboardInner = document.getElementById("leaderboardInner");
   const userEmail = getGameCookie("drive-game-email");
+  const MondayDate = getMondayOfCurrentWeek();
+  const SundayDate = getSundayOfCurrentWeek();
   loaderoverlay.style.display = "flex";
-  let useremail = { user_email: userEmail };
+  let useremail = {
+    user_email: userEmail,
+    current_monday: MondayDate,
+    current_sunday: SundayDate,
+  };
   leaderboardInner.innerHTML = "";
   jQuery.ajax({
     type: "post",
