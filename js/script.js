@@ -28,6 +28,7 @@ const leaderboardButton = document.getElementById("leaderboardButton");
 const leaderboardModal = document.getElementById("leaderboardModal");
 const closeButton = document.getElementById("leaderboardClose");
 const winneriframe = document.getElementById("winner-iframe");
+const loaderoverlay = document.getElementById("leaderboard-overlay");
 // Add event listeners for how to play modal
 const howtoplayButton = document.getElementById("howtoplayButton");
 const howtoplayModal = document.getElementById("howtoplayModal");
@@ -51,6 +52,7 @@ var gameInitLoader = document.getElementById("game-init-loader");
 const initLoader = document.querySelector(".init-loader");
 
 let countdownInterval; // Declare this at the top with other variables
+let newFinalScore = 0;
 
 // Variable to track coins collected
 let goldCoinsCollected = 0;
@@ -91,7 +93,7 @@ let backgroundPositionY = 0;
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const backgroundImage = new Image();
-backgroundImage.src = "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/road.png"; // Your background image
+backgroundImage.src = "/christmas-joyride/assets/road.png"; // Your background image
 
 let yOffset = 0;
 
@@ -105,51 +107,21 @@ let currentSoundEffect = null;
 
 // Preload the sound effects when the page loads
 function preloadSounds() {
-  sounds.open = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/open.mp3"
-  );
-  sounds.close = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/close.mp3"
-  );
-  sounds.coinSound = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/coin-sound.mp3"
-  );
-  sounds.explosionSound = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/explosion-sound.mp3"
-  );
-  sounds.titleMusic = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/title.mp3"
-  );
-  sounds.backgroundMusic = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/ingame.mp3"
-  );
-  sounds.passThroughSound1 = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound1.mp3"
-  );
-  sounds.passThroughSound2 = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound2.mp3"
-  );
-  sounds.passThroughSound3 = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound3.mp3"
-  );
-  sounds.passThroughSound4 = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound4.mp3"
-  );
-  sounds.countdownSound = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/countdown-sound.mp3"
-  );
-  sounds.startSound = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/start-sound.mp3"
-  );
-  sounds.prize = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/prize.mp3"
-  );
-  sounds.scoreCount = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/score-count.mp3"
-  );
-  sounds.laneChangeSound = new Audio(
-    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/lane-change-sound.mp3"
-  );
+  sounds.open = new Audio("/christmas-joyride/sound/open.mp3");
+  sounds.close = new Audio("/christmas-joyride/sound/close.mp3");
+  sounds.coinSound = new Audio("/christmas-joyride/sound/coin-sound.mp3");
+  sounds.explosionSound = new Audio("/christmas-joyride/sound/explosion-sound.mp3");
+  sounds.titleMusic = new Audio("/christmas-joyride/sound/title.mp3");
+  sounds.backgroundMusic = new Audio("/christmas-joyride/sound/ingame.mp3");
+  sounds.passThroughSound1 = new Audio("/christmas-joyride/sound/pass-through-sound1.mp3");
+  sounds.passThroughSound2 = new Audio("/christmas-joyride/sound/pass-through-sound2.mp3");
+  sounds.passThroughSound3 = new Audio("/christmas-joyride/sound/pass-through-sound3.mp3");
+  sounds.passThroughSound4 = new Audio("/christmas-joyride/sound/pass-through-sound4.mp3");
+  sounds.countdownSound = new Audio("/christmas-joyride/sound/countdown-sound.mp3");
+  sounds.startSound = new Audio("/christmas-joyride/sound/start-sound.mp3");
+  sounds.prize = new Audio("/christmas-joyride/sound/prize.mp3");
+  sounds.scoreCount = new Audio("/christmas-joyride/sound/score-count.mp3");
+  sounds.laneChangeSound = new Audio("/christmas-joyride/sound/lane-change-sound.mp3");
 }
 
 // Function to check settings
@@ -301,13 +273,10 @@ function createObstacle() {
   const lane = Math.floor(Math.random() * 3);
   const x = Math.max(
     0,
-    Math.min(
-      gameArea.clientWidth - obstaclesWidth,
-      lane * laneWidth + (laneWidth - obstaclesWidth) / 2
-    )
+    Math.min(gameArea.clientWidth - obstaclesWidth, lane * laneWidth + (laneWidth - obstaclesWidth) / 2)
   );
   obstacle.style.left = `${x}px`;
-  obstacle.style.top = "-150px";
+  obstacle.style.top = `-${gameArea.clientHeight}px`;
   obstacle.dataset.lane = lane;
   obstacle.dataset.previousLane = lane; // Store the initial lane
   gameArea.appendChild(obstacle);
@@ -355,21 +324,18 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return (
-      x < obstacleRect.right &&
-      x + 20 > obstacleRect.left &&
-      y < obstacleRect.bottom &&
-      y + 20 > obstacleRect.top
-    );
+    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
   });
 }
 
 function checkCollision(rect1, rect2) {
+  // Adjust the collision detection by adding a margin
+  const margin = 30; // Increase this value to reduce sensitivity
   return (
-    rect1.left < rect2.right &&
-    rect1.right > rect2.left &&
-    rect1.top < rect2.bottom &&
-    rect1.bottom > rect2.top
+    rect1.left < rect2.right - margin && // Check if the left edge of rect1 is to the left of the right edge of rect2
+    rect1.right > rect2.left + margin && // Check if the right edge of rect1 is to the right of the left edge of rect2
+    rect1.top < rect2.bottom - margin && // Check if the top edge of rect1 is above the bottom edge of rect2
+    rect1.bottom > rect2.top + margin // Check if the bottom edge of rect1 is below the top edge of rect2
   );
 }
 
@@ -405,13 +371,15 @@ function updateGame() {
     obstacle.dataset.previousLane = currentLane;
 
     // Randomly change lane with a 0.1% chance per frame
-    if (Math.random() < 0.002) {
+    if (Math.random() < 0.003) {
       const currentLane = parseInt(obstacle.dataset.lane);
       const obstacleRect = obstacle.getBoundingClientRect();
       const playerRect = player.getBoundingClientRect();
 
+      const laneChangeThreshold = score > 2000 ? 450 : 300; // Deduct more from playerRect.top if score > 2000
+
       // Only change lanes if the obstacle is not too close to the player
-      if (obstacleRect.bottom < playerRect.top - 200) {
+      if (obstacleRect.bottom < playerRect.top - laneChangeThreshold) {
         let newLane;
 
         if (currentLane === 0) {
@@ -426,10 +394,7 @@ function updateGame() {
         const laneWidth = gameArea.clientWidth / 3; // Calculate lane width based on gameArea width
         const newX = Math.max(
           0,
-          Math.min(
-            gameArea.clientWidth - obstaclesWidth,
-            newLane * laneWidth + (laneWidth - obstaclesWidth) / 2
-          )
+          Math.min(gameArea.clientWidth - obstaclesWidth, newLane * laneWidth + (laneWidth - obstaclesWidth) / 2)
         );
         obstacle.style.left = `${newX}px`;
         obstacle.dataset.lane = newLane; // Update the stored lane
@@ -525,10 +490,7 @@ function setPlayerLane(x) {
 
   playerX = Math.max(
     0,
-    Math.min(
-      gameArea.clientWidth - playerWidth,
-      newLane * laneWidth + (laneWidth - playerWidth) / 2
-    )
+    Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2)
   );
   updatePlayerPosition();
 }
@@ -546,8 +508,7 @@ function startHTP() {
 
 function resetHTP() {
   HTPplayer.classList.remove("played");
-  HTPplayer.style.backgroundImage =
-    "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
+  HTPplayer.style.backgroundImage = "url('/christmas-joyride/assets/player.png')";
 }
 
 function preStartGame() {
@@ -572,8 +533,7 @@ function startGame() {
   driveXmasTitle.classList.remove("entrance");
   startline.classList.remove("started");
   finalScoreElement.classList.remove("scale");
-  player.style.backgroundImage =
-    "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
+  player.style.backgroundImage = "url('/christmas-joyride/assets/player.png')";
   sounds.titleMusic.pause();
   setGameCookie("first", 1);
   drawBackground();
@@ -607,7 +567,7 @@ function startGame() {
   let countdown = 3;
   countdownInterval = setInterval(() => {
     // Add countdown before starting the game
-    countdownDiv.style.display = "flex";
+    countdownDiv.style.display = "block";
     tipsDiv.style.display = "block";
     countdownDiv.textContent = countdown;
     // Play countdown sound effect;
@@ -724,9 +684,7 @@ function gameOver() {
 
   // Get the current obstacle's lane
   const playerRect = player.getBoundingClientRect();
-  const collidedObstacle = obstacles.find((obstacle) =>
-    checkCollision(playerRect, obstacle.getBoundingClientRect())
-  );
+  const collidedObstacle = obstacles.find((obstacle) => checkCollision(playerRect, obstacle.getBoundingClientRect()));
 
   if (collidedObstacle) {
     const obstacleLane = parseInt(collidedObstacle.dataset.lane);
@@ -755,6 +713,7 @@ function gameOver() {
     document.getElementById("bronzeCoinsSpan").textContent = bronzeCoinsCollected;
 
     showLeaderboardForm(score);
+    newFinalScore = score;
     explosion.style.display = "none";
     // Change player background image to player-crash.gif
     player.style.backgroundImage = "url('assets/player-crash.gif')";
@@ -781,40 +740,54 @@ function animateScore(finalScore, callback) {
 
 function showLeaderboardForm(newScore) {
   showPreview(formfinish);
-  document.getElementById("leaderboardForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    const playerName = playerNameInput.value;
-    const playerEmail = playerEmailInput.value;
-    if (playerName) {
-      formLoader.style.display = "flex";
-      $.ajax({
-        url: "https://www.axs.com.sg/drive-winner-form/", // Replace with the path to your PHP file
-        type: "POST",
-        data: {
-          winner_name: playerName,
-          winner_email: playerEmail,
-          winner_score: newScore,
-          submit_winner: true, // Indicate that the form is submitted
-        },
-        success: function (response) {
+}
+
+function submitForm() {
+  const playerName = playerNameInput.value;
+  const playerEmail = playerEmailInput.value;
+  if (playerName && playerEmail) {
+    formLoader.style.display = "flex";
+    let winnerData = {
+      winner_name: playerName,
+      winner_email: playerEmail,
+      winner_score: newFinalScore,
+      submit_winner: true, // Indicate that the form is submitted
+    };
+    jQuery.ajax({
+      url: `${window.location.origin}/wp-admin/admin-ajax.php`,
+      type: "POST",
+      data: {
+        action: "store_winner", // the action to fire in the server
+        data: winnerData, // any JS object
+      },
+      complete: function (response) {
+        // console.log(JSON.parse(response.responseText).data);
+        if (JSON.parse(response.responseText).data == "success") {
           formLoader.style.display = "none";
           submitError.style.display = "none";
-          hidePreview(formfinish);
+          closeForm();
           playerNameInput.value = ""; // Clear the input field
           playerEmailInput.value = ""; // Clear the input field
           setGameCookie("name", playerName);
           setGameCookie("email", playerEmail);
-        },
-        error: function (xhr, status, error) {
-          // Handle error response
-          console.error(error);
+        } else {
           formLoader.style.display = "none";
           submitError.style.display = "block";
-          alert("An error occurred while submitting the score.");
-        },
-      });
-    }
-  });
+          submitError.innerText = "An error occurred while submitting the score.";
+        }
+      },
+      error: function (xhr, status, error) {
+        // Handle error response
+        console.error(error);
+        formLoader.style.display = "none";
+        submitError.style.display = "block";
+        submitError.innerText = "An error occurred while submitting the score.";
+      },
+    });
+  } else {
+    submitError.style.display = "block";
+    submitError.innerText = "Please fill in all the details";
+  }
 }
 
 function updateObstacleSpawnRate() {
@@ -985,35 +958,39 @@ function getSundayOfCurrentWeek() {
 }
 
 leaderboardButton.addEventListener("click", function () {
-  const loaderoverlay = document.getElementById("leaderboard-overlay");
-  const leaderboardInner = document.getElementById("leaderboardInner");
   const userEmail = getGameCookie("drive-game-email");
+  const leaderboardContent = document.getElementById("leaderboardInner");
   const MondayDate = getMondayOfCurrentWeek();
   const SundayDate = getSundayOfCurrentWeek();
-  loaderoverlay.style.display = "flex";
-  let useremail = {
+
+  leaderboardContent.innerHTML = "";
+
+  let userData = {
     user_email: userEmail,
     current_monday: MondayDate,
     current_sunday: SundayDate,
   };
-  leaderboardInner.innerHTML = "";
   jQuery.ajax({
-    type: "post",
     url: `${window.location.origin}/wp-admin/admin-ajax.php`,
+    type: "POST",
     data: {
-      action: "get_winner",
-      data: useremail,
+      action: "get_winner", // the action to fire in the server
+      data: userData, // any JS object
     },
     complete: function (response) {
-      loaderoverlay.style.display = "none";
       // console.log(JSON.parse(response.responseText).data);
-      leaderboardInner.innerHTML = JSON.parse(response.responseText).data;
+      const winnersData = JSON.parse(response.responseText).data;
+      leaderboardContent.innerHTML = winnersData;
+      loaderoverlay.style.display = "none";
     },
   });
-  // winneriframe.src = "/christmas-joyride-leaderboard.html?gamemail=" + userEmail;
-  // winneriframe.setAttribute("scrolling", "no");
-  // winneriframe.style.overflow = "hidden";
 });
+
+// Close leaderboard modal
+function closeLeaderboard() {
+  loaderoverlay.style.display = "flex";
+  hidePreview(leaderboardModal);
+}
 
 // game-btn to handle the click and touch events
 document.querySelectorAll(".game-button").forEach((button) => {
@@ -1025,6 +1002,7 @@ document.querySelectorAll(".game-button").forEach((button) => {
   button.addEventListener("touchstart", toggleActiveClass); // Handle touch event
 });
 
+// Mouse Event
 gameArea.addEventListener("mousedown", (e) => {
   if (!gameStarted) return;
   isDragging = true;
@@ -1044,24 +1022,63 @@ gameArea.addEventListener("mouseup", () => {
   isDragging = false;
 });
 
+// Touch Event
+let startX; // Variable to track the initial touch position
+
+// Existing touch event listeners
 gameArea.addEventListener("touchstart", (e) => {
   if (!gameStarted) return;
-  isDragging = true;
-  const rect = gameArea.getBoundingClientRect();
-  setPlayerLane(e.touches[0].clientX - rect.left);
+
+  const touch = e.touches[0]; // Get the first touch point
+  const bottomAreaThreshold = window.innerHeight * 0.2; // Adjust this value as needed (20% of the screen height)
+
+  // Check if the touch is in the bottom area of the screen
+  if (touch.clientY > window.innerHeight - bottomAreaThreshold) {
+    isDragging = true; // Only set dragging to true if in the bottom area
+    const rect = gameArea.getBoundingClientRect();
+    setPlayerLane(touch.clientX - rect.left);
+  } else {
+    // Store the initial touch position for swipe detection
+    startX = touch.clientX;
+  }
 });
 
 gameArea.addEventListener("touchmove", (e) => {
   if (!gameStarted) return;
-  if (isDragging) {
-    e.preventDefault();
-    const rect = gameArea.getBoundingClientRect();
-    setPlayerLane(e.touches[0].clientX - rect.left);
+
+  const touch = e.touches[0]; // Get the current touch point
+  const bottomAreaThreshold = window.innerHeight * 0.2; // Adjust this value as needed (20% of the screen height)
+
+  // Check if the touch is in the bottom area of the screen
+  if (touch.clientY > window.innerHeight - bottomAreaThreshold) {
+    if (isDragging) {
+      e.preventDefault();
+      const rect = gameArea.getBoundingClientRect();
+      setPlayerLane(touch.clientX - rect.left);
+    }
   }
 });
 
-gameArea.addEventListener("touchend", () => {
-  isDragging = false;
+gameArea.addEventListener("touchend", (e) => {
+  if (!gameStarted) return;
+
+  const touch = e.changedTouches[0]; // Get the touch that ended
+  const bottomAreaThreshold = window.innerHeight * 0.2; // Adjust this value as needed (20% of the screen height)
+
+  // Check if the touch is in the bottom area of the screen
+  if (touch.clientY <= window.innerHeight - bottomAreaThreshold) {
+    const endX = touch.clientX; // Get the final touch position
+    const swipeThreshold = 10; // Minimum distance to consider it a swipe
+
+    // Determine swipe direction
+    if (startX - endX > swipeThreshold) {
+      setPlayerLane(playerX - 100); // Adjust the lane to the left
+    } else if (endX - startX > swipeThreshold) {
+      setPlayerLane(playerX + 100); // Adjust the lane to the right
+    }
+  }
+
+  isDragging = false; // Reset dragging state on touch end
 });
 
 // Add an event listener for a key press to control the player movement
@@ -1106,8 +1123,17 @@ window.addEventListener("load", function () {
 
 // Check if user change window
 window.addEventListener("blur", () => {
-  if (gameStarted) {
-    pauseMenu();
+  if (document.hidden) {
+    if (gameStarted) {
+      pauseMenu();
+    }
+    if (isMusicOn != 0) {
+      sounds.backgroundMusic.pause();
+    }
+  } else {
+    if (isMusicOn != 0) {
+      sounds.backgroundMusic.play();
+    }
   }
 });
 
@@ -1116,6 +1142,13 @@ document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     if (gameStarted) {
       pauseMenu();
+    }
+    if (isMusicOn != 0) {
+      sounds.backgroundMusic.pause();
+    }
+  } else {
+    if (isMusicOn != 0) {
+      sounds.backgroundMusic.play();
     }
   }
 });
@@ -1172,8 +1205,7 @@ const htpdriver = driver({
       element: "#htpplayer",
       popover: {
         title: "AXS Car",
-        description:
-          "You need to deliver alot of presents,tap the lane or drag the car to change the lane",
+        description: "You need to deliver alot of presents,tap the lane or drag the car to change the lane",
         onNextClick: () => {
           closeButtonClickSound();
           playSoundEffect("passThroughSound1");
@@ -1197,8 +1229,7 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "Careful!",
-        description:
-          "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
+        description: "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
         onNextClick: () => {
           closeButtonClickSound();
           document.querySelector(".driver-popover-navigation-btns").style.display = "none";
@@ -1212,8 +1243,7 @@ const htpdriver = driver({
             setTimeout(() => {
               HTPexplosion.style.display = "none";
               // Change player background image to player-crash.gif
-              HTPplayer.style.backgroundImage =
-                "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player-crash.gif')";
+              HTPplayer.style.backgroundImage = "url('/christmas-joyride/assets/player-crash.gif')";
               document.querySelector(".driver-popover-navigation-btns").style.display = "flex";
             }, 1800);
           }, 500);
@@ -1225,8 +1255,7 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "OH NO!",
-        description:
-          "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
+        description: "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
         onPrevClick: () => {
           resetHTP();
           htpdriver.movePrevious();
