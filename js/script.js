@@ -57,7 +57,7 @@ const frameDuration = 1000 / targetFPS; // Calculate the duration of each frame 
 
 let countdownInterval; // Declare this at the top with other variables
 
-let newfinalScore = 0;
+// let newfinalScore = 0;
 // Variable to track coins collected
 let goldCoinsCollected = 0;
 let silverCoinsCollected = 0;
@@ -69,6 +69,7 @@ let speed = 2;
 let playerX = 140;
 const playerWidth = 54;
 const playerHeight = 68;
+let gametime;
 
 const obstacles = [];
 const coins = [];
@@ -86,8 +87,9 @@ let obstacleSpawnRate = 2500; // Initial spawn rate in milliseconds
 
 const obstacleTypes = ["obstacle-1", "obstacle-2", "obstacle-3", "obstacle-4", "obstacle-5"];
 
-// Delete
-// const failed = new Audio("sound/failed.mp3");
+let gameScoreData = {
+  newfinalScore: 0,
+};
 
 // Variable to track the pause state
 let isPaused = false;
@@ -580,6 +582,9 @@ function preStartGame() {
 function startGame() {
   if (gameStarted) return;
   stopGame();
+  gameScoreData = {
+    newfinalScore: 0,
+  };
   player.style.display = "block";
   HTPdiv.style.display = "none";
   startline.style.display = "block";
@@ -601,6 +606,7 @@ function startGame() {
   isPaused = false;
   isGameOver = false;
   score = 0;
+  gametime = 0;
   scoreElement.textContent = `Score: ${score}`;
   speed = 2;
   obstacleSpawnRate = 1800; // Reset spawn rate
@@ -655,6 +661,7 @@ function startGame() {
           coinInterval = setInterval(createCoin, 3000);
           scoreInterval = setInterval(() => {
             score++;
+            gametime++;
             // Increase obstacle spawn rate every 7 seconds
             if (score % 70 === 0) {
               updateObstacleSpawnRate();
@@ -774,12 +781,21 @@ function gameOver() {
     document.getElementById("silverCoinsSpan").textContent = silverCoinsCollected;
     document.getElementById("bronzeCoinsSpan").textContent = bronzeCoinsCollected;
 
-    newfinalScore = score;
+    endGame(score);
     showLeaderboardForm(score);
     explosion.style.display = "none";
+
     // Change player background image to player-crash.gif
     player.style.backgroundImage = "url('assets/player-crash.gif')";
   }, 1500); // Adjust this time based on your explosion GIF duration
+}
+
+function endGame(score) {
+  // Set the final score
+  gameScoreData.newfinalScore = score; // Assume this function calculates the score
+
+  // Freeze the object to prevent changes
+  Object.freeze(gameScoreData);
 }
 
 function animateScore(finalScore, callback) {
@@ -806,17 +822,17 @@ function showLeaderboardForm(newScore) {
 }
 
 function submitFormButton() {
-  //   console.log("test");
   const loaderoverlay = document.getElementById("form-loader");
   const playerName = playerNameInput.value;
   const playerEmail = playerEmailInput.value;
+
   if (playerName && playerEmail) {
     loaderoverlay.style.display = "flex";
     let winnerData = {
       winner_name: playerName,
       winner_email: playerEmail,
-      winner_score: newfinalScore,
-      submit_winner: true, // Indicate that the form is submitted
+      winner_score: gameScoreData.newfinalScore,
+      submit_winner: true,
     };
     jQuery.ajax({
       type: "post",
@@ -844,41 +860,36 @@ function submitFormButton() {
         }
       },
     });
-    // $.ajax({
-    //   url: "https://www.axs.com.sg/drive-winner-form/", // Replace with the path to your PHP file
-    //   type: "POST",
-    //   data: {
-    //     winner_name: playerName,
-    //     winner_email: playerEmail,
-    //     winner_score: newScore,
-    //     submit_winner: true, // Indicate that the form is submitted
-    //   },
-    //   success: function (response) {
-    //     formLoader.style.display = "none";
-    //     submitError.style.display = "none";
-    //     closeForm(formfinish);
-    //     playerNameInput.value = ""; // Clear the input field
-    //     playerEmailInput.value = ""; // Clear the input field
-    //     setGameCookie("name", playerName);
-    //     setGameCookie("email", playerEmail);
-    //   },
-    //   error: function (xhr, status, error) {
-    //     // Handle error response
-    //     console.error(error);
-    //     formLoader.style.display = "none";
-    //     submitError.style.display = "block";
-    //     alert("An error occurred while submitting the score.");
-    //   },
-    // });
   } else {
     alert("Please fill in all details.");
   }
+}
+
+function sessionID() {
+  // Base score
+  let expectedScore = score; // Start with the current score
+
+  // Add points for coins collected
+  expectedScore += goldCoinsCollected * 150; // Gold coins
+  expectedScore += silverCoinsCollected * 100; // Silver coins
+  expectedScore += bronzeCoinsCollected * 50; // Bronze coins
+
+  return expectedScore;
 }
 
 function updateObstacleSpawnRate() {
   obstacleSpawnRate = Math.max(500, obstacleSpawnRate - 80); // Decrease spawn rate, but not lower than 500ms
   clearInterval(obstacleInterval);
   obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
+}
+
+function generateHash(score) {
+  const secretKey = "your_secret_key"; // Replace with your actual secret key
+  const data = `${score}${secretKey}`;
+  return crypto.subtle.digest("SHA-256", new TextEncoder().encode(data)).then((hashBuffer) => {
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => ("00" + b.toString(16)).slice(-2)).join("");
+  });
 }
 
 // Pop Up Container
@@ -1254,7 +1265,6 @@ document.addEventListener("visibilitychange", () => {
       }
     };
   }
-
   // Call the function on page load
   disableBackNavigation();
 })();
