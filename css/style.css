@@ -139,6 +139,22 @@ body {
   transform: translateX(-50%);
 }
 
+#htp-main .htp-drag-area {
+  position: absolute;
+  bottom: 0;
+  width: 66%;
+  max-width: 330px;
+  height: 20%;
+}
+
+#htp-main .htp-swipe-area {
+  position: absolute;
+  top: 0;
+  width: 66%;
+  max-width: 330px;
+  height: 80%;
+}
+
 #htp-main #htp-car-crash-part {
   bottom: 50px;
   width: 100px;
@@ -487,7 +503,7 @@ button {
   justify-content: center;
   align-items: center;
   position: absolute;
-  top: 45%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 48px;
@@ -506,10 +522,15 @@ button {
   left: 50%;
   text-align: center;
   transform: translate(-50%, -50%);
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: white;
   padding: 10px;
   z-index: 1;
+}
+
+#tips .drag-lottie {
+  width: 100%;
+  filter: invert(1);
 }
 
 #settingModal {
@@ -601,35 +622,31 @@ button {
   word-break: normal;
 }
 
-.tnc-inner p {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 .title-logo-main {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 2%;
-  width: 50%;
+  width: 70%;
   z-index: 2;
 }
 
 .axs-title {
   width: 85%;
-  max-width: 205px;
+  max-width: 190px !important;
   margin-bottom: 10px;
 }
 
 .speed-title {
   width: 100%;
-  max-width: 250px !important;
-  opacity: 0 !important;
+  max-width: 300px !important;
+  opacity: 0;
 }
 
 .speed-title.entrance {
-  animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards,
-    swing 10s linear 3.7s infinite;
+  animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+  opacity: 1 !important;
 }
 
 #startButton {
@@ -674,6 +691,11 @@ button {
 
 #coin.bronze {
   color: #8f563b;
+}
+
+.finalscore-title {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 #finalScore {
@@ -734,6 +756,7 @@ button {
 
 .game-menu-button-main.entrance {
   animation: fade-in-bottom 0.6s cubic-bezier(0.39, 0.575, 0.565, 1) 1s forwards;
+  opacity: 1 !important;
 }
 
 .menu-button {
@@ -874,6 +897,10 @@ button {
   box-shadow: inset 4px -4px 0px 0px #cda400, inset -4px 4px 0px 0px #ffe990;
 }
 
+#leaderboardModal .leader-small {
+  font-size: 0.6rem;
+}
+
 #leaderboardModal .pop-container-inner-head {
   height: 20%;
 }
@@ -895,6 +922,20 @@ button {
   width: 100%;
   height: 100%;
   background: #debd37;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+}
+
+#leaderboard .no-winner {
+  width: 90%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1rem;
 }
 
 #leaderboard .row {
@@ -939,6 +980,7 @@ button {
 
 #leaderboard .row.gold {
   background: gold;
+  margin-top: 10px;
 }
 
 #leaderboard .row.silver {
@@ -1093,8 +1135,8 @@ button {
 /* How to play Modal */
 #howtoplayModal .cookies-p {
   text-align: center;
-  font-size: 0.9rem;
-  margin-block-end: 0;
+  font-size: 0.8rem;
+  margin: 0;
 }
 
 #howtoplay {
@@ -1158,34 +1200,6 @@ button {
   font-size: 1.2rem;
   color: #fff;
 }
-/* .init-loader {
-  margin-top: 10px;
-  position: relative;
-  display: block;
-  height: 12px;
-  width: 50%;
-  border: 2px solid #000000;
-  overflow: hidden;
-}
-
-.init-loader:after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 0;
-  background: #26bed0;
-  animation: loading 20s linear forwards;
-}
-
-.loaded.init-loader:after {
-  animation: loading-loaded 1s linear forwards;
-}
-
-.init-loader-main.remove {
-  animation: initloadremove 0.4s linear forwards;
-} */
 
 /* Media Query */
 @media screen and (max-width: 410px) {

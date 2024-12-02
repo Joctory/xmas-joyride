@@ -7,10 +7,11 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Christmas Joyride</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
-    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
   </head>
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
     .init-loader-main {
       width: 100%;
       height: 100%;
@@ -98,7 +99,7 @@
             src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/axs-logo.png"
             class="axs-title" />
           <img
-            src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/xmas-logo.png"
+            src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/xmas-logo-updated.png"
             id="drive-xmas"
             class="speed-title" />
         </div>
@@ -162,7 +163,16 @@
       </div>
       <div id="gameArea" class="disabled">
         <div id="countdown"></div>
-        <p id="tips">Tap the lane or drag the car to control</p>
+        <p id="tips">
+          <dotlottie-player
+            src="https://lottie.host/4865df3a-af95-45c2-876a-badacca5628c/pf8ewnMLEA.lottie"
+            background="transparent"
+            speed="1"
+            class="drag-lottie"
+            loop
+            autoplay></dotlottie-player>
+          Swipe/tap a lane to switch, or drag to change lanes.
+        </p>
         <div id="startline">
           <img
             src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/startline.png"
@@ -179,6 +189,8 @@
       <div class="htp-div" id="htp-div">
         <div id="htpgameArea" class="disabled">
           <div id="htp-main">
+            <div class="htp-drag-area"></div>
+            <div class="htp-swipe-area"></div>
             <div class="coin coin-gold htp-coin-gold"></div>
             <div class="coin coin-silver htp-coin-silver"></div>
             <div class="coin coin-bronze htp-coin-bronze"></div>
@@ -252,37 +264,45 @@
               <div class="tnc-axs">
                 <p><b>Terms & Conditions of “AXS DRIVE X'MAS JOYRIDE” (“Promotion”) </b></p>
                 <p>
-                  Terms & Conditions of “AXS Drive X'MAS JOYRIDE Gameplay” (“Promotion”) The Promotion is organized by
-                  AXS Pte Ltd (“AXS”).
+                  Terms & Conditions of “AXS Drive X'MAS JOYRIDE Gameplay” (“Promotion”) The
+                  Promotion is organized by AXS Pte Ltd (“AXS”).
                 </p>
                 <p><b>MECHANICS</b></p>
                 <ol start="1">
                   <li>
-                    The Promotion consists of a skill-based game where participants navigate a virtual car to avoid
-                    obstacles and score points.
+                    The Promotion consists of a skill-based game where participants navigate a
+                    virtual car to avoid obstacles and score points.
                     <div style="padding-left: 10px">
                       <p>1.1. Objective:</p>
                       <p>
-                        Participants must steer the car left or right to avoid obstacles and progress forward. Points
-                        are awarded for each obstacle successfully cleared.
+                        Participants must steer the car left or right to avoid obstacles and
+                        progress forward. Points are awarded for each obstacle successfully cleared.
                       </p>
                     </div>
                     <div style="padding-left: 10px">
                       <p>1.2. Gameplay Rules:</p>
                       <p>
-                        Participants must steer the car left or right to avoid obstacles and progress forward. Points
-                        are awarded for each obstacle successfully cleared.
+                        Participants must steer the car left or right to avoid obstacles and
+                        progress forward. Points are awarded for each obstacle successfully cleared.
                       </p>
                       <div style="padding-left: 15px">
                         <p>
-                          1.2.1 Each game session begins automatically, and collisions with obstacles will end the
-                          current session.
+                          1.2.1 Each game session begins automatically, and collisions with
+                          obstacles will end the current session.
                         </p>
-                        <p>1.2.2 Participants can restart the game immediately after a session ends.</p>
+                        <p>
+                          1.2.2 Participants can restart the game immediately after a session ends.
+                        </p>
                         <p>1.2.3 Scores are calculated based on:</p>
                         <div style="padding-left: 20px">
-                          <p>1.2.3.1 Time-Based Points: You earn 10 points for every second you survive.</p>
-                          <p>1.2.3.2 Present-Based Points:<br />Collect presents along the way to boost your score:</p>
+                          <p>
+                            1.2.3.1 Time-Based Points: You earn 10 points for every second you
+                            survive.
+                          </p>
+                          <p>
+                            1.2.3.2 Present-Based Points:<br />Collect presents along the way to
+                            boost your score:
+                          </p>
                           <ul>
                             <li>Bronze Present: 50 points</li>
                             <li>Silver Present: 100 points</li>
@@ -297,17 +317,20 @@
                       <p>1.3. Leaderboard:</p>
                       <div style="padding-left: 20px">
                         <p>1.3.1 The top 5 scores will be displayed on the leaderboard.</p>
-                        <p>1.3.2 The game resets every Sunday at 23:59, and all scores are cleared.</p>
                         <p>
-                          1.3.3 Participants may play the game an unlimited number of times to improve their scores.
+                          1.3.2 The game resets every Sunday at 23:59, and all scores are cleared.
+                        </p>
+                        <p>
+                          1.3.3 Participants may play the game an unlimited number of times to
+                          improve their scores.
                         </p>
                       </div>
                     </div>
                     <div style="padding-left: 10px">
                       <p>1.4. Participation Requirements:</p>
                       <p>
-                        1.4.1 Participants must provide a valid name and email address to have their scores saved and
-                        displayed on the leaderboard.
+                        1.4.1 Participants must provide a valid name and email address to have their
+                        scores saved and displayed on the leaderboard.
                       </p>
                     </div>
                   </li>
@@ -315,44 +338,49 @@
                 <p><b>ELIGIBILITY</b></p>
                 <ol start="2">
                   <li>
-                    This Promotion is open to all individuals aged 18 and above who are Singapore Citizens, Singapore
-                    Permanent Residents, or foreigners residing in Singapore.
+                    This Promotion is open to all individuals aged 18 and above who are Singapore
+                    Citizens, Singapore Permanent Residents, or foreigners residing in Singapore.
                   </li>
                   <li>
-                    The following persons are not eligible to participate in and are disqualified from the Promotion:
+                    The following persons are not eligible to participate in and are disqualified
+                    from the Promotion:
                     <div style="padding-left: 10px">
                       <p>3.1. Employees of AXS;</p>
                     </div>
                   </li>
                   <li>
-                    AXS may, in its sole discretion, decide on the eligibility for participation in the Promotion.
+                    AXS may, in its sole discretion, decide on the eligibility for participation in
+                    the Promotion.
                   </li>
                 </ol>
                 <p><b>PARTICIPATING CHANNEL</b></p>
                 <ol start="5">
-                  <li>The Promotion is available exclusively on the AXS Drive hosting the AXS Drive Gameplay.</li>
+                  <li>
+                    The Promotion is available exclusively on the AXS Drive hosting the AXS Drive
+                    Gameplay.
+                  </li>
                 </ol>
                 <p><b>PROMOTION PERIOD</b></p>
                 <ol start="6">
                   <li>
-                    The Promotion shall commence from 2 December 2024 to 22 December 2024, both dates inclusive
-                    (“Promotion Period”).
+                    The Promotion shall commence from 9 December 2024 to 30 December 2024, both
+                    dates inclusive (“Promotion Period”).
                   </li>
                 </ol>
                 <p><b>PRIZES</b></p>
                 <ol start="7">
                   <li>
-                    The top three (3) participants with the highest scores on the leaderboard at the end of the
-                    Promotion Period will win (“Prizes”).
+                    The top three (3) participants with the highest scores on the leaderboard at the
+                    end of the Promotion Period will win (“Prizes”).
                   </li>
                   <li>Each Winner may only win one (1) Prize during the Promotion Period.</li>
                   <li>
-                    The Prizes are non-transferable, non-exchangeable, and non-redeemable for cash, credit, or any other
-                    item.
+                    The Prizes are non-transferable, non-exchangeable, and non-redeemable for cash,
+                    credit, or any other item.
                   </li>
                   <li>
-                    AXS reserves the right to replace or substitute the Prizes with items of similar value at any time
-                    without prior notice.
+                    AXS reserves the right to replace or substitute the Prizes with items of similar
+                    value at any time without prior notice.
                     <table style="width: 100%">
                       <thead>
                         <tr>
@@ -365,17 +393,23 @@
                         <tr>
                           <td>1</td>
                           <td>2 - 8 December</td>
-                          <td>2x Adult Wild Wild Wet Tickets &amp; 2x Children Wild Wild Wet Ticket</td>
+                          <td>
+                            2x Adult Wild Wild Wet Tickets &amp; 2x Children Wild Wild Wet Ticket
+                          </td>
                         </tr>
                         <tr>
                           <td>2</td>
                           <td>9 - 15 December</td>
-                          <td>2x Adult Wild Wild Wet Tickets &amp; 2x Children Wild Wild Wet Ticket</td>
+                          <td>
+                            2x Adult Wild Wild Wet Tickets &amp; 2x Children Wild Wild Wet Ticket
+                          </td>
                         </tr>
                         <tr>
                           <td>3</td>
                           <td>16 - 22 December</td>
-                          <td>2x Adult Wild Wild Wet Tickets &amp; 2x Children Wild Wild Wet Ticket</td>
+                          <td>
+                            2x Adult Wild Wild Wet Tickets &amp; 2x Children Wild Wild Wet Ticket
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -384,41 +418,46 @@
                 <p><b>PRIZE FULFILMENT</b></p>
                 <ol start="11">
                   <li>
-                    Winners will be contacted via the email address provided during participation one (1) working day
-                    after the week of the leaderboard reset, which occurs every Sunday at 23:59.
+                    Winners will be contacted via the email address provided during participation
+                    one (1) working day after the week of the leaderboard reset, which occurs every
+                    Sunday at 23:59.
                   </li>
                   <li>
-                    If a winner cannot be contacted within seven (7) calendar days of the first notification attempt,
-                    the prize will be forfeited, and AXS reserves the right to select the next eligible participant from
-                    the leaderboard.
+                    If a winner cannot be contacted within seven (7) calendar days of the first
+                    notification attempt, the prize will be forfeited, and AXS reserves the right to
+                    select the next eligible participant from the leaderboard.
                   </li>
                   <li>
-                    The Winners shall be responsible to pay the necessary duties, fees, taxes, levies, and other charges
-                    as imposed by any relevant authorities in Singapore.
+                    The Winners shall be responsible to pay the necessary duties, fees, taxes,
+                    levies, and other charges as imposed by any relevant authorities in Singapore.
                   </li>
                   <li>
-                    The Winners and/or any other person who benefits from the Prize accept and enjoy the Prize at their
-                    own risk. AXS shall not be responsible or liable for any defect or malfunction in the Prize and/or
-                    for any loss, injury, damage or harm suffered or incurred in connection with the receipt, use, or
-                    enjoyment of the Prize by any person.
+                    The Winners and/or any other person who benefits from the Prize accept and enjoy
+                    the Prize at their own risk. AXS shall not be responsible or liable for any
+                    defect or malfunction in the Prize and/or for any loss, injury, damage or harm
+                    suffered or incurred in connection with the receipt, use, or enjoyment of the
+                    Prize by any person.
                   </li>
                   <li>
-                    AXS makes no warranties or representations whatsoever as to the quality of fitness for purpose or
-                    any other implied terms and conditions with respect to the Prize.
+                    AXS makes no warranties or representations whatsoever as to the quality of
+                    fitness for purpose or any other implied terms and conditions with respect to
+                    the Prize.
                   </li>
                   <li>
-                    Actual Prizes may differ from the images used for the Promotion or in any communications or
-                    publications relating thereto. The Customer shall not have any right to make any claims or demands
-                    against AXS in connection with such variances.
+                    Actual Prizes may differ from the images used for the Promotion or in any
+                    communications or publications relating thereto. The Customer shall not have any
+                    right to make any claims or demands against AXS in connection with such
+                    variances.
                   </li>
                   <li>
-                    AXS reserves the right to forfeit any Prizes for any winners who do not provide the required
-                    information upon the request of AXS.
+                    AXS reserves the right to forfeit any Prizes for any winners who do not provide
+                    the required information upon the request of AXS.
                   </li>
                   <li>
-                    Winner must be present in person and present the Winner's confirmation letter and his/her NRIC/FIN
-                    for the collection of the Prize. In the event that the Winner is unable to collect his/her Prize in
-                    person, he/she is able to authorize collection by another person with an authorisation letter.
+                    Winner must be present in person and present the Winner's confirmation letter
+                    and his/her NRIC/FIN for the collection of the Prize. In the event that the
+                    Winner is unable to collect his/her Prize in person, he/she is able to authorize
+                    collection by another person with an authorisation letter.
                   </li>
                   <li>
                     Collection Details:
@@ -428,96 +467,108 @@
                     </div>
                   </li>
                   <li>
-                    Any unclaimed Prize(s) within the given collection period will be forfeited without any liability on
-                    the part of AXS and AXS may donate any forfeited Prize(s) to a charitable organisation of AXS's
-                    choice.
+                    Any unclaimed Prize(s) within the given collection period will be forfeited
+                    without any liability on the part of AXS and AXS may donate any forfeited
+                    Prize(s) to a charitable organisation of AXS's choice.
                   </li>
                 </ol>
                 <p><b>FAIR PLAY AND DISQUALIFICATION</b></p>
                 <ol start="21">
                   <li>Participants must play fairly and honestly.</li>
                   <li>
-                    Any use of bots, illegal programs, or manipulation of the game to achieve scores is strictly
-                    prohibited.
+                    Any use of bots, illegal programs, or manipulation of the game to achieve scores
+                    is strictly prohibited.
                   </li>
-                  <li>AXS reserves the right to investigate and disqualify participants who violate these rules.</li>
                   <li>
-                    Scores obtained through fraudulent or unfair means will be forfeited, and the participant will be
-                    permanently disqualified.
+                    AXS reserves the right to investigate and disqualify participants who violate
+                    these rules.
+                  </li>
+                  <li>
+                    Scores obtained through fraudulent or unfair means will be forfeited, and the
+                    participant will be permanently disqualified.
                   </li>
                 </ol>
                 <p><b>FAIR PLAY AND DISQUALIFICATION</b></p>
                 <ol start="25">
                   <li>
-                    AXS's decision on all matters pertaining to the Promotion is final and binding. No further
-                    correspondence will be entertained.
+                    AXS's decision on all matters pertaining to the Promotion is final and binding.
+                    No further correspondence will be entertained.
                   </li>
                   <li>
-                    AXS reserves the right to use the names, pictures/photographs (or any other particulars) of the
-                    winners in any advertising and/or promotional materials and/or on the AXS website without prior
-                    notice, or otherwise engage the winners in any form of publicity for AXS.
+                    AXS reserves the right to use the names, pictures/photographs (or any other
+                    particulars) of the winners in any advertising and/or promotional materials
+                    and/or on the AXS website without prior notice, or otherwise engage the winners
+                    in any form of publicity for AXS.
                   </li>
                   <li>
-                    AXS reserves the right to partially or completely cancel, terminate or suspend the Promotion for any
-                    reason without any liability whatsoever.
+                    AXS reserves the right to partially or completely cancel, terminate or suspend
+                    the Promotion for any reason without any liability whatsoever.
                   </li>
                   <li>
-                    In the event of any inconsistencies between these Terms & Conditions and any promotional materials,
-                    these Terms & Conditions shall prevail.
+                    In the event of any inconsistencies between these Terms & Conditions and any
+                    promotional materials, these Terms & Conditions shall prevail.
                   </li>
                   <li>
-                    AXS shall not be liable for any loss, injury, damage, or harm suffered or incurred by any
-                    participant in connection with the Promotion or the Prizes.
+                    AXS shall not be liable for any loss, injury, damage, or harm suffered or
+                    incurred by any participant in connection with the Promotion or the Prizes.
                   </li>
                   <li>
-                    AXS's decision on all matters pertaining to the Promotion is final and binding. No further
-                    correspondence regarding the Promotion, these Terms, or any decision made by AXS in connection
-                    therewith and/or the results will be entertained. AXS reserves its absolute right to determine an
-                    outcome and act as it deems fit in any dispute and/or issues relating thereto.
+                    AXS's decision on all matters pertaining to the Promotion is final and binding.
+                    No further correspondence regarding the Promotion, these Terms, or any decision
+                    made by AXS in connection therewith and/or the results will be entertained. AXS
+                    reserves its absolute right to determine an outcome and act as it deems fit in
+                    any dispute and/or issues relating thereto.
                   </li>
                   <li>
-                    AXS shall not be liable to the Eligible Customer for any loss or damage or expenses arising in
-                    connection with the Promotion, including without limitation, any error in computing any draw
-                    chances, any technical hardware or software breakdown or malfunction or defects, or lost or
-                    unavailable network connections, and any notice that is misdirected or lost in the post, which may
-                    affect any Eligible Customers' eligibility in the Promotion.
+                    AXS shall not be liable to the Eligible Customer for any loss or damage or
+                    expenses arising in connection with the Promotion, including without limitation,
+                    any error in computing any draw chances, any technical hardware or software
+                    breakdown or malfunction or defects, or lost or unavailable network connections,
+                    and any notice that is misdirected or lost in the post, which may affect any
+                    Eligible Customers' eligibility in the Promotion.
                   </li>
                   <li>
-                    AXS shall not be liable to any person in any way for any loss or damage howsoever arising from or in
-                    connection with the Promotion and/or any of the Prizes.
+                    AXS shall not be liable to any person in any way for any loss or damage
+                    howsoever arising from or in connection with the Promotion and/or any of the
+                    Prizes.
                   </li>
                   <li>
-                    AXS reserves the right at any time to amend or delete these Terms and/or any of the instructions or
-                    explanations at its sole discretion without prior notice. Any such changes shall be binding and will
-                    take effect immediately upon such amendment, change, or deletion. Participation in this Promotion
-                    shall constitute acceptance of these Terms and any amendment(s) thereof.
+                    AXS reserves the right at any time to amend or delete these Terms and/or any of
+                    the instructions or explanations at its sole discretion without prior notice.
+                    Any such changes shall be binding and will take effect immediately upon such
+                    amendment, change, or deletion. Participation in this Promotion shall constitute
+                    acceptance of these Terms and any amendment(s) thereof.
                   </li>
                   <li>
-                    In the event of any inconsistency between these terms and conditions and any brochures, marketing,
-                    or promotional materials relating to the Promotion, these terms and conditions shall prevail.
+                    In the event of any inconsistency between these terms and conditions and any
+                    brochures, marketing, or promotional materials relating to the Promotion, these
+                    terms and conditions shall prevail.
                   </li>
                   <li>
-                    These terms and conditions are governed by Singapore law and the Eligible Customers agree to submit
-                    to the exclusive jurisdiction of the Singapore Courts.
+                    These terms and conditions are governed by Singapore law and the Eligible
+                    Customers agree to submit to the exclusive jurisdiction of the Singapore Courts.
                   </li>
                   <li>
-                    A person who is not a party to these terms and conditions shall have no right under the Contracts
-                    (Rights of Third Parties) Act (2001) to enforce any of these terms and conditions and
-                    notwithstanding any terms herein, the consent of any third party is not required for any variation
-                    (including any release or compromise of any liability) or termination of the Promotion.
+                    A person who is not a party to these terms and conditions shall have no right
+                    under the Contracts (Rights of Third Parties) Act (2001) to enforce any of these
+                    terms and conditions and notwithstanding any terms herein, the consent of any
+                    third party is not required for any variation (including any release or
+                    compromise of any liability) or termination of the Promotion.
                   </li>
                 </ol>
                 <p><b>PERSONAL DATA PROTECTION ACT</b></p>
                 <ol start="37">
                   <li>
-                    The Eligible Customers consent under the Personal Data Protection Act (2012) (“Act”) to the
-                    collection, use, and disclosure of their personal data by/to the organisers, promoters, or
-                    conductors of the Promotion and such other third parties for the purpose of the Promotion.
+                    The Eligible Customers consent under the Personal Data Protection Act (2012)
+                    (“Act”) to the collection, use, and disclosure of their personal data by/to the
+                    organisers, promoters, or conductors of the Promotion and such other third
+                    parties for the purpose of the Promotion.
                   </li>
                   <li>
-                    The Eligible Customers confirm that they have read and agree to be bound by the terms of the AXS
-                    Privacy Policy, as may be amended, supplemented, and/or substituted by AXS from time to time, copies
-                    of which can be found at <a href="www.axs.com.sg">www.axs.com.sg</a>.
+                    The Eligible Customers confirm that they have read and agree to be bound by the
+                    terms of the AXS Privacy Policy, as may be amended, supplemented, and/or
+                    substituted by AXS from time to time, copies of which can be found at
+                    <a href="www.axs.com.sg">www.axs.com.sg</a>.
                   </li>
                 </ol>
               </div>
@@ -559,13 +610,16 @@
       <div id="leaderboardModal" class="pop-container">
         <div class="pop-container-inner">
           <div class="pop-container-inner-head">
-            <p class="modal-title">Leaderboard</p>
+            <p class="modal-title">
+              Leaderboard<br />
+              <span class="leader-small">Refresh every Monday</span>
+            </p>
           </div>
           <div id="leaderboard" class="pop-container-info">
+            <div id="leaderboardInner" class="leaderboard-inner"></div>
             <div id="leaderboard-overlay" class="leaderboard-overlay">
               <span class="leaderboard-loader"></span>
             </div>
-            <iframe id="winner-iframe" src="" width="100%" height="500" frameborder="0"></iframe>
           </div>
           <div
             class="closeBtn game-button"
@@ -587,8 +641,9 @@
           <div class="pop-container-info">
             <p class="cookies-p">
               By clicking "Agree," you consent to our use of cookies for performance and email
-              collection. Please review our Privacy Policy (Link to AXS Privacy Policy) below before
-              proceeding.
+              collection. Please review our
+              <a target="_blank" href="https://axs.com.sg/privacy-policy/">Privacy Policy</a> below
+              before proceeding.
             </p>
             <div class="howtoplay-menu">
               <div class="game-button" onclick="hidePreview(howtoplayModal)">
@@ -620,7 +675,6 @@
           </div>
           <div class="pop-container-info">
             <div id="credit">
-              <p>Map assets by DeviantArt</p>
               <p>Artwork and assets by AXS - Janelle</p>
             </div>
           </div>
@@ -640,7 +694,11 @@
             <input type="text" id="playerName" placeholder="Name" required />
             <input type="text" id="playerEmail" placeholder="Email" required />
             <p id="submit-error">An error occurred while submitting the score.</p>
-            <button class="form-submit-button game-button" type="submit">
+            <button
+              id="form-submit"
+              class="form-submit-button game-button"
+              type="button"
+              onclick="submitFormButton()">
               <img
                 src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/submit-btn.png"
                 class="form-submit-img" />
@@ -676,6 +734,6 @@
       src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
       type="module"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="/js/script.js"></script>
+    <script type="text/javascript" src="/js/script.js"></script>
   </body>
 </html>
