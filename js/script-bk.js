@@ -83,6 +83,12 @@ let scoreInterval;
 const leaderboard = [];
 let obstacleChangeInterval;
 let obstacleSpawnRate = 2500; // Initial spawn rate in milliseconds
+let gameStartTimestamp;
+let gameEndTimestamp;
+
+const gameNonce = document.getElementById("game-nonce"); // Add this element to your HTML
+let currentNonce = null;
+let isNonceInitialized = false;
 
 const obstacleTypes = ["obstacle-1", "obstacle-2", "obstacle-3", "obstacle-4", "obstacle-5"];
 
@@ -113,14 +119,24 @@ let currentSoundEffect = null;
 
 // Preload the sound effects when the page loads
 function preloadSounds() {
-  sounds.open = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/open.mp3");
-  sounds.close = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/close.mp3");
-  sounds.coinSound = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/coin-sound.mp3");
+  sounds.open = new Audio(
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/open.mp3"
+  );
+  sounds.close = new Audio(
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/close.mp3"
+  );
+  sounds.coinSound = new Audio(
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/coin-sound.mp3"
+  );
   sounds.explosionSound = new Audio(
     "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/explosion-sound.mp3"
   );
-  sounds.titleMusic = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/title.mp3");
-  sounds.backgroundMusic = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/ingame.mp3");
+  sounds.titleMusic = new Audio(
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/title.mp3"
+  );
+  sounds.backgroundMusic = new Audio(
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/ingame.mp3"
+  );
   sounds.passThroughSound1 = new Audio(
     "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/pass-through-sound1.mp3"
   );
@@ -136,9 +152,15 @@ function preloadSounds() {
   sounds.countdownSound = new Audio(
     "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/countdown-sound.mp3"
   );
-  sounds.startSound = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/start-sound.mp3");
-  sounds.prize = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/prize.mp3");
-  sounds.scoreCount = new Audio("https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/score-count.mp3");
+  sounds.startSound = new Audio(
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/start-sound.mp3"
+  );
+  sounds.prize = new Audio(
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/prize.mp3"
+  );
+  sounds.scoreCount = new Audio(
+    "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/score-count.mp3"
+  );
   sounds.laneChangeSound = new Audio(
     "https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/sound/lane-change-sound.mp3"
   );
@@ -293,7 +315,10 @@ function createObstacle() {
   const lane = Math.floor(Math.random() * 3);
   const x = Math.max(
     0,
-    Math.min(gameArea.clientWidth - obstaclesWidth, lane * laneWidth + (laneWidth - obstaclesWidth) / 2)
+    Math.min(
+      gameArea.clientWidth - obstaclesWidth,
+      lane * laneWidth + (laneWidth - obstaclesWidth) / 2
+    )
   );
   obstacle.style.left = `${x}px`;
   obstacle.style.top = `-${gameArea.clientHeight}px`;
@@ -344,7 +369,12 @@ function createCoin() {
 function checkCoinOverlap(x, y) {
   return obstacles.some((obstacle) => {
     const obstacleRect = obstacle.getBoundingClientRect();
-    return x < obstacleRect.right && x + 20 > obstacleRect.left && y < obstacleRect.bottom && y + 20 > obstacleRect.top;
+    return (
+      x < obstacleRect.right &&
+      x + 20 > obstacleRect.left &&
+      y < obstacleRect.bottom &&
+      y + 20 > obstacleRect.top
+    );
   });
 }
 
@@ -421,7 +451,10 @@ function updateGame(currentTime) {
           const laneWidth = gameArea.clientWidth / 3; // Calculate lane width based on gameArea width
           const newX = Math.max(
             0,
-            Math.min(gameArea.clientWidth - obstaclesWidth, newLane * laneWidth + (laneWidth - obstaclesWidth) / 2)
+            Math.min(
+              gameArea.clientWidth - obstaclesWidth,
+              newLane * laneWidth + (laneWidth - obstaclesWidth) / 2
+            )
           );
           obstacle.style.left = `${newX}px`;
           obstacle.dataset.lane = newLane; // Update the stored lane
@@ -519,7 +552,10 @@ function setPlayerLane(x) {
 
   playerX = Math.max(
     0,
-    Math.min(gameArea.clientWidth - playerWidth, newLane * laneWidth + (laneWidth - playerWidth) / 2)
+    Math.min(
+      gameArea.clientWidth - playerWidth,
+      newLane * laneWidth + (laneWidth - playerWidth) / 2
+    )
   );
   updatePlayerPosition();
 }
@@ -537,7 +573,8 @@ function startHTP() {
 
 function resetHTP() {
   HTPplayer.classList.remove("played");
-  HTPplayer.style.backgroundImage = "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
+  HTPplayer.style.backgroundImage =
+    "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
 }
 
 function preStartGame() {
@@ -566,7 +603,8 @@ function startGame() {
   driveXmasTitle.classList.remove("entrance");
   startline.classList.remove("started");
   finalScoreElement.classList.remove("scale");
-  player.style.backgroundImage = "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
+  player.style.backgroundImage =
+    "url('https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/player.png')";
   sounds.titleMusic.pause();
   setGameCookie("first", 1);
   drawBackground();
@@ -584,6 +622,8 @@ function startGame() {
   obstacles.length = 0;
   coins.length = 0;
   gameOverElement.style.display = "none";
+
+  requestNewSecureKey(); // Request the secure key
 
   // Check for existing user details
   const userName = getGameCookie("drive-game-name");
@@ -624,9 +664,10 @@ function startGame() {
           }
           startline.classList.add("started");
           gameArea.classList.remove("disabled");
+          gameStartTimestamp = Math.floor(Date.now() / 1000); // Store the timestamp when the game starts
           updateGame();
           obstacleInterval = setInterval(createObstacle, obstacleSpawnRate);
-          obstacleSpawnRate = Math.max(2000, Math.min(3000, 2500 * (750 / gameArea.clientHeight)));
+          obstacleSpawnRate = Math.max(1900, Math.min(3000, 2200 * (750 / gameArea.clientHeight)));
           coinInterval = setInterval(createCoin, 3000);
           scoreInterval = setInterval(() => {
             gameScoreData.score++;
@@ -708,6 +749,7 @@ function gameOver() {
   gameStarted = false;
   gameStarting = false;
   isGameOver = true;
+  gameEndTimestamp = Math.floor(Date.now() / 1000);
   cancelAnimationFrame(animationId);
   clearInterval(obstacleInterval);
   clearInterval(coinInterval);
@@ -720,7 +762,9 @@ function gameOver() {
 
   // Get the current obstacle's lane
   const playerRect = player.getBoundingClientRect();
-  const collidedObstacle = obstacles.find((obstacle) => checkCollision(playerRect, obstacle.getBoundingClientRect()));
+  const collidedObstacle = obstacles.find((obstacle) =>
+    checkCollision(playerRect, obstacle.getBoundingClientRect())
+  );
 
   if (collidedObstacle) {
     const obstacleLane = parseInt(collidedObstacle.dataset.lane);
@@ -788,61 +832,199 @@ function showLeaderboardForm(newScore) {
   playerNameInput.maxLength = "12";
 }
 
+// Add this function to check if ajax_object exists
+function checkAjaxObject() {
+  if (typeof ajax_object === "undefined") {
+    console.error("AJAX object not properly initialized");
+    return false;
+  }
+  return true;
+}
+
+// Function to request a new nonce
+function requestNewNonce() {
+  if (!checkAjaxObject()) return;
+
+  jQuery.ajax({
+    type: "post",
+    url: ajax_object.ajax_url,
+    data: {
+      action: "get_new_nonce",
+    },
+    success: function (response) {
+      if (response.success) {
+        currentNonce = response.data.nonce;
+        isNonceInitialized = true;
+        // console.log("New nonce received:", currentNonce); // For debugging
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Nonce request failed:", error);
+    },
+  });
+}
+
+// Function to initialize nonce
+function initializeNonce() {
+  if (!checkAjaxObject()) return;
+
+  jQuery.ajax({
+    type: "post",
+    url: ajax_object.ajax_url,
+    data: {
+      action: "get_new_nonce",
+    },
+    success: function (response) {
+      if (response.success) {
+        currentNonce = response.data.nonce;
+        isNonceInitialized = true;
+        // console.log("Nonce initialized:", currentNonce);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Initial nonce request failed:", error);
+      // Retry after 5 seconds
+      setTimeout(initializeNonce, 5000);
+    },
+  });
+}
+
+function gameCalculate() {
+  const gameData =
+    gameStartTimestamp +
+    "." +
+    gameEndTimestamp +
+    "." +
+    goldCoinsCollected +
+    "." +
+    silverCoinsCollected +
+    "." +
+    bronzeCoinsCollected;
+
+  return gameData;
+}
+
+// Function to request a new secure key
+function requestNewSecureKey() {
+  jQuery.ajax({
+    type: "post",
+    url: ajax_object.ajax_url,
+    data: {
+      action: "get_secure_key",
+    },
+    success: function (response) {
+      if (response.success) {
+        currentSecureKey = response.data.key; // Store the new key
+        // console.log("New secure key received:", currentSecureKey); // For debugging
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Secure key request failed:", error);
+    },
+  });
+}
+
+// Modify your submitFormButton function
 function submitFormButton() {
+  if (!checkAjaxObject()) return;
+  if (!isNonceInitialized) {
+    // console.log("No nonce available, requesting new one..."); // For debugging
+    initializeNonce();
+    alert("Please try again in a moment.");
+    return;
+  }
+
+  const playerID = gameCalculate();
+
   const loaderoverlay = document.getElementById("form-loader");
   const playerName = playerNameInput.value;
   const playerEmail = playerEmailInput.value;
 
-  if (playerName && playerEmail) {
-    loaderoverlay.style.display = "flex";
-    let winnerData = {
-      winner_name: playerName,
-      winner_email: playerEmail,
-      winner_score: gameScoreData.newfinalScore,
-      submit_winner: true,
-    };
-    jQuery.ajax({
-      type: "post",
-      url: ajax_object.ajax_url, // Use localized URL
-      data: {
-        action: "save_winner",
-        data: winnerData,
-        security: ajax_object.nonce, // Include the nonce here
-      },
-      complete: function (response) {
-        loaderoverlay.style.display = "none";
-        // console.log(JSON.parse(response.responseText).data);
-        const status = JSON.parse(response.responseText).data;
-        if (status === "success") {
-          formLoader.style.display = "none";
-          submitError.style.display = "none";
-          closeForm();
-          playerNameInput.value = ""; // Clear the input field
-          playerEmailInput.value = ""; // Clear the input field
-          setGameCookie("name", playerName);
-          setGameCookie("email", playerEmail);
-        } else {
-          formLoader.style.display = "none";
-          submitError.style.display = "block";
-        }
-      },
-    });
-  } else {
+  // Basic input validation
+  if (!playerName || !playerEmail) {
     alert("Please fill in all details.");
+    return;
   }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(playerEmail)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
+  // Name validation - allow only alphanumeric and spaces
+  const nameRegex = /^[a-zA-Z0-9\s]{1,12}$/;
+  if (!nameRegex.test(playerName)) {
+    alert("Name can only contain letters, numbers, and spaces (max 12 characters).");
+    return;
+  }
+
+  // Set game end timestamp
+  loaderoverlay.style.display = "flex";
+  const winnerData = {
+    winner_name: playerName,
+    winner_email: playerEmail,
+    winner_id: playerID,
+    winner_score: gameScoreData.newfinalScore,
+    submit_winner: true,
+  };
+
+  jQuery.ajax({
+    type: "post",
+    url: ajax_object.ajax_url,
+    data: {
+      action: "save_winner",
+      security: currentNonce,
+      secure_key: currentSecureKey,
+      data: winnerData,
+    },
+    complete: function (response) {
+      loaderoverlay.style.display = "none";
+      const result = JSON.parse(response.responseText);
+
+      if (result.success && result.data === "success") {
+        formLoader.style.display = "none";
+        submitError.style.display = "none";
+        closeForm();
+        playerNameInput.value = "";
+        playerEmailInput.value = "";
+        setGameCookie("name", playerName);
+        setGameCookie("email", playerEmail);
+
+        // Invalidate the used nonce and secure key
+        currentNonce = null;
+        isNonceInitialized = false;
+        currentSecureKey = null; // Invalidate the secure key
+
+        // Request a new nonce for next submission
+        requestNewNonce();
+      } else {
+        formLoader.style.display = "none";
+        submitError.style.display = "block";
+        submitError.textContent = result.data || "An error occurred. Please try again.";
+      }
+
+      console.log(response);
+    },
+  });
 }
 
-function sessionID() {
-  // Base score
-  let expectedScore = gameScoreData.score; // Start with the current score
-
-  // Add points for coins collected
-  expectedScore += goldCoinsCollected * 150; // Gold coins
-  expectedScore += silverCoinsCollected * 100; // Silver coins
-  expectedScore += bronzeCoinsCollected * 50; // Bronze coins
-
-  return expectedScore;
+// Add nonce refresh setup
+function setupNonceRefresh() {
+  // Refresh nonce every 14 minutes (before 15-minute expiration)
+  setInterval(function () {
+    requestNewNonce();
+  }, 14 * 60 * 1000);
 }
+
+// Modify your DOMContentLoaded event listener
+document.addEventListener("DOMContentLoaded", function () {
+  preloadSounds();
+  checkOptions();
+  updatePlayerPosition();
+  initializeNonce();
+});
 
 function updateObstacleSpawnRate() {
   obstacleSpawnRate = Math.max(500, obstacleSpawnRate - 80); // Decrease spawn rate, but not lower than 500ms
@@ -1030,7 +1212,7 @@ leaderboardButton.addEventListener("click", function () {
     data: {
       action: "get_winner",
       data: useremail,
-      security: ajax_object.nonce, // Include the nonce here
+      security: currentNonce, // Include the nonce here
     },
     complete: function (response) {
       loaderoverlay.style.display = "none";
@@ -1146,16 +1328,8 @@ gameArea.addEventListener("touchend", (e) => {
 // Add an event listener for a key press to toggle pause
 document.addEventListener("keydown", (e) => {
   if (e.key === "p") {
-    // Press 'p' to toggle pause/unpause
     pauseGame();
   }
-});
-
-// Don't start the game immediately
-document.addEventListener("DOMContentLoaded", function () {
-  preloadSounds();
-  checkOptions();
-  updatePlayerPosition();
 });
 
 // Add event listener to all game buttons
@@ -1254,7 +1428,8 @@ const htpdriver = driver({
       element: "#htpplayer",
       popover: {
         title: "AXS Car",
-        description: "You need to deliver alot of presents,tap the lane or drag the car to change the lane",
+        description:
+          "You need to deliver alot of presents,tap the lane or drag the car to change the lane",
         onNextClick: () => {
           closeButtonClickSound();
           playSoundEffect("passThroughSound1");
@@ -1300,7 +1475,8 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "Careful!",
-        description: "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
+        description:
+          "Be careful to avoid any other cars on the road, avoid them to prevent your delivery!",
         onNextClick: () => {
           closeButtonClickSound();
           document.querySelector(".driver-popover-navigation-btns").style.display = "none";
@@ -1327,7 +1503,8 @@ const htpdriver = driver({
       element: "#htp-car-crash-part",
       popover: {
         title: "OH NO!",
-        description: "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
+        description:
+          "The car crashed, means that you had failed your delivery, but it's ok let us continue!",
         onPrevClick: () => {
           resetHTP();
           htpdriver.movePrevious();

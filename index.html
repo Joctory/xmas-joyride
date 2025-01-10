@@ -53,13 +53,6 @@
 
       <!-- Game Menu Screen -->
       <div id="startMenu">
-        <dotlottie-player
-          src="https://lottie.host/27ed4531-0c80-41a0-9c8f-fc1e42bee100/Z50wk6s0DK.lottie"
-          background="transparent"
-          speed="1"
-          loop
-          autoplay
-          class="snowScreen"></dotlottie-player>
         <div class="title-car-main">
           <img
             src="https://cdn.jsdelivr.net/gh/Joctory/xmas-joyride@main/v1/assets/title-car.png"
@@ -693,6 +686,7 @@
             <h3 class="leaderboardForm-h3">Enter your name for the leaderboard:</h3>
             <input type="text" id="playerName" placeholder="Name" required />
             <input type="text" id="playerEmail" placeholder="Email" required />
+            <input type="hidden" id="game-nonce" name="game-nonce" value="" />
             <p id="submit-error">An error occurred while submitting the score.</p>
             <button
               id="form-submit"
@@ -735,6 +729,6 @@
       src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
       type="module"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/script.js"></script>
+    <script type="text/javascript" src="/js/script-bk.js"></script>
   </body>
 </html>

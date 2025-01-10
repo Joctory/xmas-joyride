@@ -8,6 +8,13 @@
   height: 100%;
 }
 
+.elementor-widget-container {
+  display: flex;
+  justify-content: center;
+}
+
+/* EO Wordpress Elementor */
+
 body {
   touch-action: pan-y pan-x;
 }
@@ -1209,6 +1216,14 @@ button {
 
   .menu-button {
     width: 40%;
+  }
+}
+
+@media screen and (min-width: 500px) {
+  .init-loader-main {
+    max-width: 500px;
+    left: 50% !important;
+    transform: translateX(-50%);
   }
 }
 
