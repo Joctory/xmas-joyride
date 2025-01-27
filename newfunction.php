@@ -50,22 +50,22 @@ function get_winner_function()
     // Prepare the arguments for the query
     $args = array(
         'post_type' => 'winner',
-        'posts_per_page' => 5, // Limit to 5 posts
-        'orderby' => 'meta_value_num', // Order by numeric meta value
-        'order' => 'DESC', // Descending order
-        'meta_key' => 'winner_score', // Specify the meta key to order by
-        'post_status' => 'publish', // Only get published posts
+        'posts_per_page' => 5,
+        'orderby' => 'meta_value_num',
+        'order' => 'DESC',
+        'meta_key' => 'winner_score',
+        'post_status' => 'publish',
         'meta_query' => array(
             array(
                 'key' => 'winner_score',
-                'type' => 'NUMERIC' // Ensure winner_score is treated as a number
+                'type' => 'NUMERIC'
             )
         ),
         'date_query' => array(
             array(
-                'after' => $data['current_monday'], // Start of the week
-                'before' => $data['current_sunday'], // End of the week
-                'inclusive' => true, // Include the start and end dates
+                'after' => $data['current_thursday'], // Start of the period (Thursday)
+                'before' => $data['next_thursday'],   // End of the period (next Thursday)
+                'inclusive' => true,
             ),
         ),
     );
@@ -141,7 +141,7 @@ function save_game_winner()
 
     // Validate the secure key
     if (!isset($_POST['secure_key']) || !validate_secure_key($_POST['secure_key'])) {
-        wp_send_json_error('Invalid secure token');
+        wp_send_json_error('Invalid secure token, please refresh the page');
         return;
     }
 
